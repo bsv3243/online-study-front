@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar elevation="0">
+  <v-app-bar elevation="1">
     <v-responsive class="mx-auto" max-width="1200px">
       <v-container class="d-flex">
         <div>
