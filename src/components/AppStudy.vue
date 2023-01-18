@@ -4,7 +4,7 @@
      <v-container>
        <v-row>
          <v-col cols="2">
-           <StudyCategory/>
+           <StudySort/>
          </v-col>
          <v-col>
             <StudyList/>
@@ -16,14 +16,13 @@
 </template>
 
 <script>
-import StudyCategory from "@/components/study/StudyCategory";
 import StudyList from "@/components/study/StudyList";
+import StudySort from "@/components/study/StudySort";
 export default {
   name: "AppStudy",
-  components: {StudyList, StudyCategory}
+  components: {StudySort, StudyList}
 }
 </script>
 
 <style scoped>
-
 </style>
