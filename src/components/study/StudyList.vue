@@ -27,9 +27,10 @@
     <v-container class="d-flex flex-wrap">
       <v-card
           class="ma-1 mx-2"
-        v-for="(group, i) in groups"
-        :key="i"
-        link>
+          width="200px"
+          v-for="(group, i) in groups"
+          :key="i"
+          link>
         <router-link to="/group" style="text-decoration: none; color: inherit;">
         <v-card-item>
           <v-card-title v-text="group.title"></v-card-title>
@@ -39,6 +40,17 @@
         <v-card-text>
           {{group.memberCount}} / {{group.headcount}}
         </v-card-text>
+        <v-card-actions>
+          <v-chip-group>
+            <v-chip
+                v-for="tag in group.studies"
+                :key="tag.id"
+                size="small"
+                variant="text">
+              #{{tag.title}}
+            </v-chip>
+          </v-chip-group>
+        </v-card-actions>
       </v-card>
     </v-container>
     <v-container>
@@ -62,24 +74,28 @@ export default {
         category: "취직",
         headcount: 30,
         memberCount: 10,
+        studies: [{id:1, title:"테스트1"}, {id:2, title:"테스트2"}]
       },
       {
         title: "테스트 그룹2",
         category: "대학생",
         headcount: 30,
-        memberCount: 5
+        memberCount: 5,
+        studies: [{id:3, title:"spring"}, {id:4, title:"vue.js"}]
       },
       {
         title: "테스트 그룹2",
         category: "대학생",
         headcount: 30,
-        memberCount: 5
+        memberCount: 5,
+        studies: [],
       },
       {
         title: "테스트 그룹2",
         category: "대학생",
         headcount: 30,
-        memberCount: 5
+        memberCount: 5,
+        studies: [],
       }
     ],
     categories: [

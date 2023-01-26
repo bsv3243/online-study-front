@@ -3,9 +3,10 @@
    <v-responsive class="mx-auto" max-width="1200px">
      <v-container>
        <v-row>
-         <v-col cols="2">
+         <div class="left">
            <StudySort/>
-         </v-col>
+           <StudyTags class="mt-10"/>
+         </div>
          <v-col>
             <StudyList/>
          </v-col>
@@ -18,11 +19,16 @@
 <script>
 import StudyList from "@/components/study/StudyList";
 import StudySort from "@/components/study/StudySort";
+import StudyTags from "@/components/study/StudyTags";
 export default {
   name: "AppStudy",
-  components: {StudySort, StudyList}
+  components: {StudyTags, StudySort, StudyList}
 }
 </script>
 
 <style scoped>
+.left {
+  margin-top: 12px;
+  width: 200px;
+}
 </style>
