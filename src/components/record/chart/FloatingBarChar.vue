@@ -22,13 +22,8 @@ export default {
         datasets: [
           {
             label: "데이터셋1",
-            data: [40, 20, 12],
+            data: [[20, 40], [30, 40], [12, 57]],
             backgroundColor: "#bb7e7e",
-          },
-          {
-            label: "데이터셋2",
-            data: [20, 30, 12],
-            backgroundColor: "#eeba36"
           }
         ]
       },
