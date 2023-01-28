@@ -20,6 +20,7 @@
         <v-col>
           <v-card height="300">
             공부 시작 종료 시간 차트
+            <FloatingBarChar/>
           </v-card>
         </v-col>
       </v-row>
@@ -29,9 +30,10 @@
 
 <script>
 import StackedBarChart from "@/components/record/StackedBarChart";
+import FloatingBarChar from "@/components/record/chart/FloatingBarChar";
 export default {
   name: "RecordList",
-  components: {StackedBarChart}
+  components: {FloatingBarChar, StackedBarChart}
 }
 </script>
 
