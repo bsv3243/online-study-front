@@ -18,22 +18,23 @@ export default {
   data() {
     return {
       chartData: {
-        labels: [ '2023-01-27', '2023-01-28', '2023-01-29' ],
+        labels: [ '01-27', '01-28', '01-29', '01-30', '01-31', '02-01', '02-02' ],
         datasets: [
             {
               label: "데이터셋1",
-              data: [3600*3, 3600*2, 3600*4],
+              data: [3600*3, 3600*2, 3600*4, 3600*2.8, 3600*3.2, 3600*2.4, 3600*3.5],
               backgroundColor: "#bb7e7e",
             },
           {
             label: "데이터셋2",
-            data: [3600, 3600*2, 3600*1.5],
+            data: [3600, 3600*2, 3600*1.5, 3600*1.6, 3600*0.8, 3600*1.2, 3600*1.4],
             backgroundColor: "#eeba36"
           }
         ]
       },
       chartOptions: {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
           x: {
             stacked: true
