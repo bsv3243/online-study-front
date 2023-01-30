@@ -1,28 +1,27 @@
 <template>
-  <Bar
-      id="my-chart-id"
+  <Pie
+      id="pie-chart"
       :options="chartOptions"
-      :data="chartData"
-  />
+      :data="chartData"/>
 </template>
 
 <script>
-import { Bar } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import { Pie } from 'vue-chartjs'
+import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale } from 'chart.js'
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale)
 
 export default {
-  name: "FloatingBarChar",
-  components: { Bar },
+  name: "PieChart",
+  components: { Pie },
   data() {
     return {
       chartData: {
-        labels: [ '01-27', '01-28', '01-29' ],
+        labels: [ 'spring', 'vue.js', '휴식' ],
         datasets: [
           {
             label: "데이터셋1",
-            data: [[3600, 12000], [5000, 13200], [4600, 14200]],
+            data: [37405, 13627, 5324],
             backgroundColor: "#bb7e7e",
           }
         ]
@@ -30,23 +29,14 @@ export default {
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false,
-        scales: {
-          y: {
-            ticks: {
-              callback: function (v) {return new Date(v*1000).toISOString().substring(11, 19)},
-              stepSize: 120*60,
-              min: 0,
-              // max: 3600*24
-            }
-          }
-        },
         plugins: {
           tooltip: {
             callbacks: {
               label: (tooltipItem) => {
                 const index = tooltipItem.dataIndex;
                 const data = tooltipItem.dataset.data[index];
-                const date = new Date((data[1]-data[0])*1000);
+                // const label = tooltipItem.label;
+                const date = new Date(data*1000);
 
                 const hours = date.getHours()-9;
                 const minutes = date.getMinutes();
@@ -55,15 +45,10 @@ export default {
             }
           }
         }
-
       }
     }
   },
-  methods: {
-
-  }
 }
-
 </script>
 
 <style scoped>
