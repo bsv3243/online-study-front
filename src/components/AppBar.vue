@@ -13,11 +13,6 @@
             <router-link to="/record" style="text-decoration: none; color: inherit">공부기록</router-link>
           </v-btn>
         </div>
-        <div class="ml-4">
-          <v-btn>
-            <router-link to="/record">공부 기록</router-link>
-          </v-btn>
-        </div>
         <v-spacer></v-spacer>
         <v-btn>로그인</v-btn>
       </v-container>
