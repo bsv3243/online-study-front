@@ -4,6 +4,7 @@
       <v-container>
         <v-row>
           <div class="left">
+            <RecordSearch/>
           </div>
           <v-col>
             <RecordList/>
@@ -16,9 +17,10 @@
 
 <script>
 import RecordList from "@/components/record/RecordList";
+import RecordSearch from "@/components/record/RecordSearch";
 export default {
   name: "AppRecord",
-  components: {RecordList},
+  components: {RecordSearch, RecordList},
   data:() => ({
   })
 }
