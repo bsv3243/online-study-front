@@ -18,7 +18,7 @@ export default {
   data() {
     return {
       chartData: {
-        labels: [ '01-27', '01-28', '01-29' ],
+        labels: [ '2023-01-27', '2023-01-28', '2023-01-29' ],
         datasets: [
           {
             label: "데이터셋1",
@@ -29,7 +29,6 @@ export default {
       },
       chartOptions: {
         responsive: true,
-        maintainAspectRatio: false,
         scales: {
           y: {
             ticks: {
