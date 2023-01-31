@@ -3,29 +3,24 @@
     <v-container>
       <v-row>
         <v-col cols="6">
-          <v-card class="pa-3">
+          <v-card height="300">
+            <v-container>
               총 공부시간 합산 차트
-            <v-card-text>
-              <PieChart/>
-            </v-card-text>
+            </v-container>
           </v-card>
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="6">
-          <v-card class="pa-3" min-height="35vh">
+        <v-col>
+          <v-card height="300">
             공부시간 차트
-            <div style="height: 30vh">
-              <StackedBarChart/>
-            </div>
+            <StackedBarChart/>
           </v-card>
         </v-col>
-        <v-col cols="6">
-          <v-card class="pa-3" min-height="35vh">
+        <v-col>
+          <v-card height="300">
             공부 시작 종료 시간 차트
-            <div style="height: 30vh">
             <FloatingBarChar/>
-            </div>
           </v-card>
         </v-col>
       </v-row>
@@ -36,10 +31,9 @@
 <script>
 import StackedBarChart from "@/components/record/StackedBarChart";
 import FloatingBarChar from "@/components/record/chart/FloatingBarChar";
-import PieChart from "@/components/record/chart/PieChart";
 export default {
   name: "RecordList",
-  components: {PieChart, FloatingBarChar, StackedBarChart}
+  components: {FloatingBarChar, StackedBarChart}
 }
 </script>
 
