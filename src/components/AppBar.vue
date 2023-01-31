@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar>
+  <v-app-bar elevation="1">
     <v-responsive class="mx-auto" max-width="1200px">
       <v-container class="d-flex">
         <div>
@@ -7,7 +7,10 @@
         </div>
         <div class="ml-4">
           <v-btn>
-            <router-link to="/">공부방</router-link>
+            <router-link to="/" style="text-decoration: none; color: inherit">공부방</router-link>
+          </v-btn>
+          <v-btn>
+            <router-link to="/record" style="text-decoration: none; color: inherit">공부기록</router-link>
           </v-btn>
         </div>
         <div class="ml-4">
@@ -42,5 +45,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
