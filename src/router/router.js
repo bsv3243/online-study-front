@@ -5,7 +5,7 @@ import AppRecord from "@/components/AppRecord";
 
 const routes = [
     {path: "/", name: "AppStudy", component: AppStudy},
-    {path: "/record", name: "AppRecord", component: AppRecord}
+    {path: "/record", name: "AppRecord", component: AppRecord},
     {path: "/group", name: "StudyGroup", component: StudyGroup},
 ]
 
