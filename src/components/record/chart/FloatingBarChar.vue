@@ -18,48 +18,19 @@ export default {
   data() {
     return {
       chartData: {
-        labels: [ '2023-01-27', '2023-01-28', '2023-01-29' ],
+        labels: [ 'January', 'February', 'March' ],
         datasets: [
           {
             label: "데이터셋1",
-            data: [[3600, 12000], [5000, 13200], [4600, 14200]],
+            data: [[20, 40], [30, 40], [12, 57]],
             backgroundColor: "#bb7e7e",
           }
         ]
       },
       chartOptions: {
         responsive: true,
-        scales: {
-          y: {
-            ticks: {
-              callback: function (v) {return new Date(v*1000).toISOString().substring(11, 19)},
-              stepSize: 120*60,
-              min: 0,
-              // max: 3600*24
-            }
-          }
-        },
-        plugins: {
-          tooltip: {
-            callbacks: {
-              label: (tooltipItem) => {
-                const index = tooltipItem.dataIndex;
-                const data = tooltipItem.dataset.data[index];
-                const date = new Date((data[1]-data[0])*1000);
-
-                const hours = date.getHours()-9;
-                const minutes = date.getMinutes();
-                return hours + "시간 " + minutes + "분";
-              }
-            }
-          }
-        }
-
       }
     }
-  },
-  methods: {
-
   }
 }
 

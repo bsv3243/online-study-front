@@ -18,16 +18,16 @@ export default {
   data() {
     return {
       chartData: {
-        labels: [ '2023-01-27', '2023-01-28', '2023-01-29' ],
+        labels: [ 'January', 'February', 'March' ],
         datasets: [
             {
               label: "데이터셋1",
-              data: [3600*3, 3600*2, 3600*4],
+              data: [40, 20, 12],
               backgroundColor: "#bb7e7e",
             },
           {
             label: "데이터셋2",
-            data: [3600, 3600*2, 3600*1.5],
+            data: [20, 30, 12],
             backgroundColor: "#eeba36"
           }
         ]
@@ -39,28 +39,7 @@ export default {
             stacked: true
           },
           y: {
-            stacked: true,
-            ticks: {
-              callback: (v) => {
-                return new Date(v*1000).toISOString().substring(11, 19);
-              },
-              stepSize: 120*60
-            }
-          }
-        },
-        plugins: {
-          tooltip: {
-            callbacks: {
-              label: (tooltipItem) => {
-                const index = tooltipItem.dataIndex;
-                const data = tooltipItem.dataset.data[index];
-                const date = new Date(data*1000);
-
-                const hours = date.getHours()-9;
-                const minutes = date.getMinutes();
-                return hours + "시간 " + minutes + "분";
-              }
-            }
+            stacked: true
           }
         }
       }
