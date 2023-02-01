@@ -14,15 +14,17 @@
           </v-btn>
         </div>
         <v-spacer></v-spacer>
-        <v-btn>로그인</v-btn>
+        <LoginForm/>
       </v-container>
     </v-responsive>
   </v-app-bar>
 </template>
 
 <script>
+import LoginForm from "@/components/login/LoginForm";
 export default {
   name: "AppBar",
+  components: {LoginForm},
   data: () => ({
     links: [
       {
@@ -34,7 +36,8 @@ export default {
       {
         title:"프로필"
       }
-    ]
+    ],
+    loginDialog: false,
   })
 }
 </script>
