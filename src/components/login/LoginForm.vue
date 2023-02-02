@@ -14,7 +14,9 @@
           </v-form>
           <v-btn block>로그인</v-btn>
           <div class="d-flex justify-center">
-            <v-btn variant="plain">회원가입</v-btn>
+            <router-link to="/signup" style="text-decoration: none; color: inherit;">
+            <v-btn variant="plain" @click="loginDialog=false">회원가입</v-btn>
+            </router-link>
           </div>
         </v-container>
       </v-card-text>
@@ -32,5 +34,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
