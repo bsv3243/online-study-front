@@ -7,16 +7,25 @@
         <v-form>
           <v-text-field density="compact"
                         variant="solo"
+                        v-model="signupRequest.username"
                         label="아이디"/>
           <v-text-field density="compact"
                         variant="solo"
                         hint="비밀번호는 8자 이상, 20자 이하여야 합니다."
+                        type="password"
+                        v-model="signupRequest.password"
                         label="비밀번호"/>
           <v-text-field density="compact"
                         variant="solo"
-                        label="비밀번호 확인" />
+                        :rules="[
+                            v => v===this.signupRequest.password || '비밀번호가 일치하지 않습니다.'
+                        ]"
+                        type="password"
+                        v-model="passwordCheck"
+                        label="비밀번호 확인"/>
         </v-form>
-        <v-btn block>가입하기</v-btn>
+        <v-btn block
+               @click="signUpApiCall">가입하기</v-btn>
       </v-container>
     </v-responsive>
     </v-sheet>
@@ -28,7 +37,19 @@ export default {
   name: "SignupForm",
   data:() => ({
     passwordFocus: false,
-  })
+    signupRequest: {
+      username: "",
+      password: ""
+    },
+    passwordCheck: "",
+  }),
+  methods: {
+    async signUpApiCall() {
+      if(this.signupRequest.password !== this.passwordCheck) {
+        alert("비밀번호가 일치하지 않습니다.")
+      }
+    }
+  }
 }
 </script>
 
