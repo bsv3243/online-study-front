@@ -39,7 +39,8 @@ export default {
     passwordFocus: false,
     signupRequest: {
       username: "",
-      password: ""
+      password: "",
+      nickname: "",
     },
     passwordCheck: "",
   }),
@@ -47,6 +48,17 @@ export default {
     async signUpApiCall() {
       if(this.signupRequest.password !== this.passwordCheck) {
         alert("비밀번호가 일치하지 않습니다.")
+      }
+      if(this.signupRequest.nickname === "") {
+        this.signupRequest.nickname = this.signupRequest.username
+      }
+
+      try {
+        const response = await this.axios.post('http://localhost:8080/api/v1/members', this.signupRequest);
+        console.log(response);
+        this.$router.push('/');
+      } catch (err) {
+        console.log(err);
       }
     }
   }
