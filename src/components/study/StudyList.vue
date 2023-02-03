@@ -22,6 +22,10 @@
             </v-text-field>
           </v-form>
         </v-col>
+        <v-spacer/>
+        <v-col>
+          <StudyGroupCreate/>
+        </v-col>
       </v-row>
     </v-container>
     <v-container class="d-flex flex-wrap">
@@ -65,8 +69,10 @@
 </template>
 
 <script>
+import StudyGroupCreate from "@/components/study/StudyGroupCreate";
 export default {
   name: "StudyList",
+  components: {StudyGroupCreate},
   data: () => ({
     groups: [
       {
