@@ -72,7 +72,7 @@ export default {
         let groupStudy = this.groupStudies[this.selectedGroupStudy]
         groupStudy.time = "0시간 0분"
 
-        if(!this.studies.includes(groupStudy)) {
+        if(this.studies.filter(study => study.id===groupStudy.id).length === 0) {
           // this.studies.push(groupStudy)
           this.emitData(groupStudy)
         }
@@ -89,15 +89,18 @@ export default {
 
     async createStudyApiCall() {
       try {
-        const response = await this.axios.post("http://localhost:8080/api/v1/studies", this.newStudy);
-        return response.data;
+        console.log("axios post")
+        // const response = await this.axios.post("http://localhost:8080/api/v1/studies", this.newStudy);
+        // return response.data;
       } catch (err) {
         alert("잠시 후에 다시 시도해주세요.")
       }
     },
     async addStudyApiCall(studyId) {
       try {
-        await this.axios.post("http://localhost:8080/api/v1/addStudies", studyId);
+        console.log(this.studies)
+        console.log("axios post data: ", studyId)
+        // await this.axios.post("http://localhost:8080/api/v1/addStudies", studyId);
       } catch (err) {
         alert("잠시 후에 다시 시도해주세요.")
       }
