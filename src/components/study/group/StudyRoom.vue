@@ -9,9 +9,9 @@
       <v-col cols="5">
         <v-card min-height="12vh">
           <v-card-text class="d-flex">
-            <p v-if="selectedStudies instanceof Array">선택된 공부가 없습니다.</p>
-            <p v-text="selectedStudies.name"></p>
-            <p v-text="selectedStudies.time"></p>
+            <p v-if="selectedStudy instanceof Array">선택된 공부가 없습니다.</p>
+            <p v-text="selectedStudy.name"></p>
+            <p v-text="selectedStudy.time"></p>
           </v-card-text>
           <v-card-actions>
             <v-menu
@@ -34,7 +34,7 @@
                     v-for="study in studies"
                     :key="study.id"
                     :value="study.id"
-                    @click="selectedStudies=study"
+                    @click="selectedStudy=study"
                     active-color="primary"
                   >
                     <v-list-item-title>{{study.name}}</v-list-item-title>
@@ -47,36 +47,7 @@
                     닫기
                   </v-btn>
                   <v-spacer/>
-                  <v-dialog max-width="350">
-                    <template v-slot:activator="{ props }">
-                      <v-btn v-bind="props">
-                        추가
-                      </v-btn>
-                    </template>
-                    <v-card>
-                      <v-card-text>
-                        <v-text-field
-                            density="compact"
-                            variant="solo"
-                            label="공부 이름"></v-text-field>
-                        <v-chip-group>
-                          <v-chip
-                              v-for="study in groupStudies"
-                              :key="study.id"
-                              @click="addStudy(study)">
-                            {{study.name}}
-                          </v-chip>
-                        </v-chip-group>
-                      </v-card-text>
-                      <v-card-actions>
-                        <v-spacer/>
-                        <v-btn>
-                          추가하기
-                        </v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
-
+                  <AddStudyDialog :studies="studies" @selectedStudy="addStudy"/>
                 </v-card-actions>
               </v-card>
             </v-menu>
@@ -105,15 +76,17 @@
 
 <script>
 import StudyMember from "@/components/study/group/StudyMember";
+import AddStudyDialog from "@/components/study/group/AddStudyDialog";
 export default {
   name: "StudyRoom",
-  components: {StudyMember},
+  components: {AddStudyDialog, StudyMember},
   watch: {
     notSelected() {
     }
   },
   data: () => ({
     menu: false,
+    showDialog: false,
 
     img: require('@/assets/img/study_icon.png'),
     members: [
@@ -154,25 +127,15 @@ export default {
         time: "2시간 12분"
       }
     ],
-    selectedStudies: [],
-    groupStudies: [
-      {
-        id: "3",
-        name: "레디스"
-      },
-      {
-        id: "4",
-        name: "리액트"
-      }
-    ]
+    selectedStudy: [],
+
   }),
   methods: {
     test() {
       this.menu = false;
     },
-    addStudy(study) {
-      study.time = "0시간 0분"
-      this.studies.push(study)
+    addStudy(value) {
+      this.studies.push(value)
     }
   }
 }
