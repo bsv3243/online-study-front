@@ -25,11 +25,14 @@
       </v-col>
       <v-col cols="5">
         <v-card min-height="12vh">
-          <v-card-text class="d-flex align-center justify-center">
-            <p v-if="selectedStudy instanceof Array">선택된 공부가 없습니다.</p>
-            <p class="" v-text="selectedStudy.name"></p>
-
-            <p v-text="selectedStudy.time"></p>
+          <v-card-text>
+            <div v-if="selectedStudy instanceof Array">
+              <p class="text-center">선택된 공부가 없습니다.</p>
+            </div>
+            <div class="d-flex justify-space-between" v-if="selectedStudy.name">
+              <p class="studyInfo" v-text="selectedStudy.name"></p>
+              <p class="largeInfo" v-text="selectedStudy.time"></p>
+            </div>
           </v-card-text>
           <v-card-actions>
             <v-menu
@@ -179,6 +182,11 @@ export default {
   }
   .largeInfo {
     font-size: 20px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+  }
+  .studyInfo {
+    font-size: 24px;
     font-family: 'Noto Sans KR', sans-serif;
     font-weight: 500;
   }
