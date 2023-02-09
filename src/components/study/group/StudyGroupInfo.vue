@@ -25,23 +25,8 @@
               <v-col>
                 <div>그룹 생성일: 2023-01-12</div>
               </v-col>
-            </v-row>
-
-            <v-row>
               <v-col>
-                <div>
-                  인원수: 25 / 30
-                </div>
-              </v-col>
-              <v-col>
-                <div>
-                  출석률: 75%
-                </div>
-              </v-col>
-              <v-col>
-                <div>
-                  평균 공부시간: 5시간 35분
-                </div>
+                <div>인원수: 25 / 30</div>
               </v-col>
             </v-row>
 
