@@ -8,7 +8,11 @@
             <div class="content">{{post.content}}</div>
             <div class="content">
               <div>{{post.member}}</div>
-              <div class="d-flex align-center"><svg-icon type="mdi" :path="mdiCommentOutline"/>1</div>
+              <div class="d-flex align-center">
+                <svg-icon type="mdi" :path="mdiEyeOutline"/>1
+                <div class="px-1"/>
+                <svg-icon type="mdi" :path="mdiCommentOutline"/>1
+              </div>
             </div>
           </div>
         </v-list-item>
@@ -20,7 +24,7 @@
 
 <script>
 import SvgIcon from '@jamescoyle/vue-icon'
-import { mdiCommentOutline } from '@mdi/js';
+import { mdiCommentOutline, mdiEyeOutline } from '@mdi/js';
 export default {
   name: "StudyCommunity",
   components: {
@@ -28,6 +32,7 @@ export default {
   },
   data: () => ({
     mdiCommentOutline,
+    mdiEyeOutline,
     posts: [
       {
         id: 1,
@@ -41,10 +46,16 @@ export default {
 </script>
 
 <style scoped>
-  .title {
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500&display=swap');
 
+  .title {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+    font-size: 20px;
   }
   .content {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 400;
     display: flex;
     justify-content: space-between;
   }
