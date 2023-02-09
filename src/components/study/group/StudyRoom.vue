@@ -3,7 +3,24 @@
     <v-row class="justify-space-between">
       <v-col cols="5">
         <v-card min-height="12vh">
-          <v-card-text>12명 공부 중</v-card-text>
+          <v-card-text class="roomInfo">
+
+            <v-container class="pa-0">
+              <v-row>
+                <v-col>
+                  <v-card-subtitle class="px-0">평균 공부 시간</v-card-subtitle>
+                  <p>5시간 35분</p>
+                </v-col>
+                <v-col>
+                  <v-card-subtitle class="px-0">출석률</v-card-subtitle>
+                  <p>75%</p>
+                </v-col>
+              </v-row>
+            </v-container>
+            <div class="d-flex align-center largeInfo">
+              <p>현재 12명 공부 중</p>
+            </div>
+          </v-card-text>
         </v-card>
       </v-col>
       <v-col cols="5">
@@ -143,6 +160,8 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500&display=swap');
+
   .room {
     min-height: 70vh;
     border: 2px solid #d9d9d9;
@@ -152,5 +171,15 @@ export default {
     flex-wrap: wrap;
     align-content: flex-start;
     justify-content: center;
+  }
+  .roomInfo {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    min-height: inherit;
+  }
+  .largeInfo {
+    font-size: 20px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
   }
 </style>
