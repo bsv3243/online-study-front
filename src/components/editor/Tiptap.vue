@@ -56,7 +56,7 @@
         </button>
       </div>
     </div>
-    <div>
+    <div class="input-container">
       <editor-content :editor="editor" class="editor"/>
     </div>
   </div>
@@ -142,6 +142,8 @@ button:hover {
 .menu3 {
   padding-left: 10px;
 }
+.input-container {
+}
 .editor {
   padding: 10px;
 }
@@ -150,6 +152,8 @@ button:hover {
 }
 /* Basic editor styles */
 .ProseMirror {
+  min-height: 50vh;
+
   > * + * {
     margin-top: 0.75em;
   }
