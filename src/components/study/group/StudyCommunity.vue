@@ -18,7 +18,15 @@
         </v-list-item>
       <v-divider/>
     </v-list>
-    <v-pagination class="text-center" length="5"></v-pagination>
+    <div class="community-bottom">
+      <v-spacer/>
+      <v-pagination length="5"></v-pagination>
+      <div class="pt-2">
+        <v-btn class="float-right bg-green-lighten-1" variant="outlined">
+          글쓰기
+        </v-btn>
+      </div>
+    </div>
   </v-container>
 </template>
 
@@ -58,5 +66,9 @@ export default {
     font-weight: 400;
     display: flex;
     justify-content: space-between;
+  }
+  .community-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
   }
 </style>
