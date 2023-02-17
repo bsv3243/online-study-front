@@ -7,7 +7,17 @@
             <div class="title">{{post.title}}</div>
             <div class="content">{{post.content}}</div>
             <div class="content">
-              <div>{{post.member}}</div>
+              <div>
+                <div>{{post.member}}</div>
+                <div></div>
+              </div>
+            </div>
+            <div class="d-flex justify-space-between">
+              <v-chip-group>
+                <v-chip v-for="tag in post.studies" :key="tag.id" class="pa-2" label>
+                  # {{tag.title}}
+                </v-chip>
+              </v-chip-group>
               <div class="d-flex align-center">
                 <svg-icon type="mdi" :path="mdiEyeOutline"/>1
                 <div class="px-1"/>
@@ -18,7 +28,15 @@
         </v-list-item>
       <v-divider/>
     </v-list>
-    <v-pagination class="text-center" length="5"></v-pagination>
+    <div class="community-bottom">
+      <v-spacer/>
+      <v-pagination length="5"></v-pagination>
+      <div class="pt-2">
+        <v-btn class="float-right bg-green-lighten-1" variant="outlined">
+          글쓰기
+        </v-btn>
+      </div>
+    </div>
   </v-container>
 </template>
 
@@ -38,7 +56,17 @@ export default {
         id: 1,
         title: "게시글 제목",
         content: "게시글 내용",
-        member: "작성자"
+        member: "작성자",
+        studies: [
+          {
+            id: 1,
+            title: "spring"
+          },
+          {
+            id: 2,
+            title: "vue.js"
+          }
+        ]
      }
     ]
   })
@@ -58,5 +86,9 @@ export default {
     font-weight: 400;
     display: flex;
     justify-content: space-between;
+  }
+  .community-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
   }
 </style>
