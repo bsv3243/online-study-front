@@ -11,6 +11,7 @@
               :items="categories"
               item-title="title"
               item-value="value"
+              variant="outlined"
               density="comfortable"></v-select>
         </v-col>
         <v-col cols="5">
@@ -18,6 +19,7 @@
             <v-text-field
                 label="검색"
                 v-model="search"
+                variant="outlined"
                 density="comfortable">
             </v-text-field>
           </v-form>
@@ -40,7 +42,6 @@
           <v-card-title v-text="group.title"></v-card-title>
           <v-card-subtitle v-text="group.category"></v-card-subtitle>
         </v-card-item>
-        </router-link>
         <v-card-text>
           {{group.memberCount}} / {{group.headcount}}
         </v-card-text>
@@ -55,6 +56,7 @@
             </v-chip>
           </v-chip-group>
         </v-card-actions>
+        </router-link>
       </v-card>
     </v-container>
     <v-container>
