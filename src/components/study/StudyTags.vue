@@ -4,7 +4,7 @@
       <v-row>
         <v-col>
           <v-form>
-            <v-text-field label="태그" density="compact">
+            <v-text-field label="태그" variant="outlined" density="compact">
 
             </v-text-field>
           </v-form>

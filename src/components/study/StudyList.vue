@@ -30,13 +30,11 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-container class="d-flex flex-wrap">
-      <v-card
-          class="ma-1 mx-2"
-          width="200px"
-          v-for="(group, i) in groups"
-          :key="i"
-          link>
+    <v-container class="study-list">
+      <div class="pa-2 w-25"
+           v-for="(group, i) in groups"
+           :key="i">
+        <v-card min-height="190" link>
         <router-link to="/group" style="text-decoration: none; color: inherit;">
         <v-card-item>
           <v-card-title v-text="group.title"></v-card-title>
@@ -58,6 +56,7 @@
         </v-card-actions>
         </router-link>
       </v-card>
+      </div>
     </v-container>
     <v-container>
       <div class="text-center">
@@ -137,4 +136,8 @@ export default {
 </script>
 
 <style scoped>
+.study-list {
+  display: flex;
+  flex-wrap: wrap;
+}
 </style>

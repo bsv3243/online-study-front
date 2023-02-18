@@ -1,7 +1,8 @@
 <template>
-  <v-sheet min-height="200">
+  <v-sheet min-height="200" rounded="lg">
+    <v-container>
     <v-form>
-      <v-text-field density="compact" label="검색" />
+      <v-text-field density="compact" variant="outlined" label="검색" />
     </v-form>
     <div>
       <v-chip-group
@@ -15,6 +16,7 @@
         </v-chip>
       </v-chip-group>
     </div>
+    </v-container>
   </v-sheet>
 </template>
 

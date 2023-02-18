@@ -10,20 +10,25 @@
         <v-container>
           <v-form>
             <v-text-field density="compact"
-                          variant="solo"
+                          variant="outlined"
                           v-model="loginRequest.username"
                           label="아이디"/>
             <v-text-field density="compact"
-                          variant="solo"
+                          variant="outlined"
                           v-model="loginRequest.password"
                           type="password"
                           label="비밀번호"/>
           </v-form>
-          <v-btn block @click="loginApiCall">로그인</v-btn>
-          <div class="d-flex justify-center">
-            <router-link to="/signup" style="text-decoration: none; color: inherit;">
-            <v-btn variant="plain" @click="loginDialog=false">회원가입</v-btn>
-            </router-link>
+          <div class="login-actions">
+            <v-btn block @click="loginApiCall">로그인</v-btn>
+            <div class="d-flex justify-center">
+              <router-link class="sign-up"
+                           to="/signup"
+                           @click="loginDialog=false">
+                회원가입
+    <!--            <v-btn @click="loginDialog=false">회원가입</v-btn>-->
+              </router-link>
+            </div>
           </div>
         </v-container>
       </v-card-text>
@@ -54,4 +59,18 @@ export default {
 </script>
 
 <style scoped>
+.link-btn {
+  text-align: center;
+}
+.sign-up {
+  margin: 0 auto;
+  text-underline-position: under;
+  text-decoration: underline;
+  color: inherit;
+}
+.login-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
 </style>

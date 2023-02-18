@@ -1,6 +1,6 @@
 <template>
+  <v-sheet height="90vh">
   <v-responsive class="mx-auto" max-width="1200px">
-    <v-sheet height="90vh">
       <v-container>
         <v-row>
           <v-col cols="2">
@@ -33,8 +33,8 @@
           </v-col>
         </v-row>
       </v-container>
-    </v-sheet>
   </v-responsive>
+  </v-sheet>
 </template>
 
 <script>

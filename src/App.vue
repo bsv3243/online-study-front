@@ -21,3 +21,12 @@ export default {
   }),
 }
 </script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500&display=swap');
+
+html {
+  font-family: "Noto Sans KR", serif;
+  font-weight: 400;
+}
+</style>
