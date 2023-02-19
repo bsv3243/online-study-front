@@ -17,10 +17,13 @@
     "chart.js": "^4.2.0",
     "core-js": "^3.8.3",
     "node-sass": "^8.0.0",
+    "pinia": "^2.0.30",
+    "pinia-plugin-persistedstate": "^3.0.2",
     "roboto-fontface": "*",
     "sass-loader": "^13.2.0",
     "vue": "^3.2.13",
     "vue-chartjs": "^5.2.0",
+    "vue-cookies": "^1.8.2",
     "vue-router": "^4.1.6",
     "vuetify": "^3.0.0-beta.0",
     "webfontloader": "^1.0.0"

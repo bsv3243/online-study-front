@@ -37,6 +37,8 @@
 </template>
 
 <script>
+import {useLoginStore} from "@/LoginStore";
+
 export default {
   name: "LoginForm",
   data:() => ({
@@ -46,10 +48,19 @@ export default {
       password: ""
     }
   }),
+  mounted() {
+  },
   methods: {
     async loginApiCall() {
       try {
         await this.axios.post("http://localhost:8080/api/v1/login", this.loginRequest)
+
+        const loginStore = useLoginStore();
+        loginStore.login();
+
+        console.log(loginStore.test)
+
+        this.$router.push("/")
       } catch (err) {
         alert("아이디/비밀번호가 일치하지 않습니다.")
       }
