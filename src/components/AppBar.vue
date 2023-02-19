@@ -14,17 +14,27 @@
           </v-btn>
         </div>
         <v-spacer></v-spacer>
-        <LoginForm/>
+        <LoginForm v-if="!loginStore.isLogin"/>
+        <v-btn v-if="loginStore.isLogin" @click="logoutApiCall" variant="plain">로그아웃</v-btn>
       </v-container>
     </v-responsive>
   </v-app-bar>
 </template>
 
 <script>
+import {useLoginStore} from "@/LoginStore";
 import LoginForm from "@/components/login/LoginForm";
 export default {
   name: "AppBar",
   components: {LoginForm},
+  setup() {
+    const loginStore = useLoginStore();
+
+    return {loginStore};
+  },
+  mounted() {
+    console.log(this.loginStore.test)
+  },
   data: () => ({
     links: [
       {
@@ -38,7 +48,19 @@ export default {
       }
     ],
     loginDialog: false,
-  })
+  }),
+  methods: {
+    async logoutApiCall() {
+      try {
+        await this.axios.post("http://localhost:8080/api/v1/logout")
+
+        this.loginStore.logout()
+        this.$router.push("/")
+      } catch (err) {
+        alert("잠시 후에 다시 시도해주세요.")
+      }
+    }
+  }
 }
 </script>
 
