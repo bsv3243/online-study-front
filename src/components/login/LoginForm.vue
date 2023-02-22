@@ -1,10 +1,13 @@
 <template>
+  <div>
+    <v-btn @click="loginStore.setLoginDialog(true)">로그인</v-btn>
   <v-dialog
+      v-if="dataReady"
       v-model="loginDialog"
       max-width="350">
-    <template v-slot:activator="{ props }">
-      <v-btn v-bind="props">로그인</v-btn>
-    </template>
+<!--    <template v-slot:activator="{ props }">-->
+<!--      <v-btn v-bind="props">로그인</v-btn>-->
+<!--    </template>-->
     <v-card>
       <v-card-text>
         <v-container>
@@ -24,7 +27,7 @@
             <div class="d-flex justify-center">
               <router-link class="sign-up"
                            to="/signup"
-                           @click="loginDialog=false">
+                           @click="loginStore.setLoginDialog(false)">
                 회원가입
     <!--            <v-btn @click="loginDialog=false">회원가입</v-btn>-->
               </router-link>
@@ -34,31 +37,54 @@
       </v-card-text>
     </v-card>
   </v-dialog>
+  </div>
 </template>
 
 <script>
 import {useLoginStore} from "@/LoginStore";
+import {storeToRefs} from 'pinia'
+import {ref, watch} from "vue";
 
 export default {
   name: "LoginForm",
+  setup() {
+    const loginStore = useLoginStore();
+
+    const loginDialog = ref(false)
+
+    return {loginStore, loginDialog}
+  },
+  watch: {
+
+  },
   data:() => ({
-    loginDialog: false,
     loginRequest: {
       username: "",
       password: ""
-    }
+    },
+
+    //axios Ready
+    dataReady: false,
   }),
   mounted() {
+    this.loginStore.setLoginDialog(false)
+
+    watch(() => this.loginStore.loginDialog, () => {
+      this.loginDialog = this.loginStore.getLoginDialog
+    })
+
+    watch(() => this.loginDialog, () => {
+      this.loginStore.setLoginDialog(this.loginDialog)
+    })
+
+    this.dataReady = true
   },
   methods: {
     async loginApiCall() {
       try {
         await this.axios.post("http://localhost:8080/api/v1/login", this.loginRequest)
 
-        const loginStore = useLoginStore();
-        loginStore.login();
-
-        console.log(loginStore.test)
+        this.loginStore.login();
 
         this.$router.push("/")
       } catch (err) {
