@@ -30,14 +30,14 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-container class="study-list">
+    <v-container class="study-list" v-if="dataReady">
       <div class="pa-2 w-25"
            v-for="(group, i) in groups"
            :key="i">
         <v-card min-height="190" link>
-        <router-link to="/group" style="text-decoration: none; color: inherit;">
+        <router-link :to="/group/+group.groupId" style="text-decoration: none; color: inherit;">
         <v-card-item>
-          <v-card-title v-text="group.title"></v-card-title>
+          <v-card-title v-text="group.name"></v-card-title>
           <v-card-subtitle v-text="group.category"></v-card-subtitle>
         </v-card-item>
         <v-card-text>
@@ -74,36 +74,26 @@ import StudyGroupCreate from "@/components/study/StudyGroupCreate";
 export default {
   name: "StudyList",
   components: {StudyGroupCreate},
+  watch: {
+  },
   data: () => ({
     groups: [
       {
-        title: "테스트 그룹",
+        groupId: 0,
+        name: "테스트 그룹",
         category: "취직",
         headcount: 30,
         memberCount: 10,
         studies: [{id:1, title:"테스트1"}, {id:2, title:"테스트2"}]
       },
       {
-        title: "테스트 그룹2",
+        groupId: 1,
+        name: "테스트 그룹2",
         category: "대학생",
         headcount: 30,
         memberCount: 5,
         studies: [{id:3, title:"spring"}, {id:4, title:"vue.js"}]
       },
-      {
-        title: "테스트 그룹2",
-        category: "대학생",
-        headcount: 30,
-        memberCount: 5,
-        studies: [],
-      },
-      {
-        title: "테스트 그룹2",
-        category: "대학생",
-        headcount: 30,
-        memberCount: 5,
-        studies: [],
-      }
     ],
     categories: [
       {
@@ -126,10 +116,50 @@ export default {
     select: {title: "전체", value: "ALL"},
     page: 1,
     search: "",
-  }),
-  methods: {
-    clickGroup() {
+    groupsGetRequest: {
+      page: 0,
+      size: 12,
+      category: null,
+      search: null,
+      studyIds: null,
+      orderBy: null,
+    },
 
+    //axios Ready
+    dataReady: false,
+    //axiosResponse 데이터
+    response: {
+      code: "200",
+      data: null,
+      size: 1,
+      totalPages: 10,
+      hasNext: false,
+      hasPrevious: false,
+    }
+  }),
+  mounted() {
+    this.groupsGetApiCall()
+
+    this.dataReady = true;
+  },
+  methods: {
+    async groupsGetApiCall() {
+      this.groupsGetRequest.page = this.page-1;
+      const response
+          = await this.axios.get("http://localhost:8080/api/v1/groups", {
+            params: {
+              page: this.groupsGetRequest.page,
+              size: this.groupsGetRequest.size,
+              category: this.groupsGetRequest.category,
+              search: this.groupsGetRequest.search,
+              studyIds: this.groupsGetRequest.studyIds,
+              orderBy: this.groupsGetRequest.orderBy
+            }
+      });
+      this.response = response.data;
+      console.log(this.response)
+      this.groups = this.response.data
+      console.log(this.groups);
     }
   }
 }
