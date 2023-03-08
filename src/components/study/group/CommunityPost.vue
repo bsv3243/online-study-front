@@ -4,7 +4,7 @@
       <v-responsive class="mx-auto" max-width="830px">
       <div class="d-flex flex-column">
         <div class="pt-5">
-          <v-btn variant="outlined">
+          <v-btn variant="outlined" @click="moveToPostList">
             목록
           </v-btn>
         </div>
@@ -36,7 +36,7 @@
               <v-list-item class="comment" v-for="comment in post.comments" :key="comment.commentId">
                 <div class="comment-info">
                   <h4 v-html="comment.member.nickname"></h4>
-                  <span class="created-at" v-html="getCommentCreatedAt(comment.createdAt)"></span>
+                  <span class="created-at" v-html="getCreatedAtToString(comment.createdAt)"></span>
                 </div>
                 <div>
                   <span v-html="comment.content"></span>
@@ -78,6 +78,9 @@ export default {
     ],
     createdAtYMD: null,
     createdAtHMS: null,
+
+    //route
+    groupId: null,
 
     //axios
     //api call complete
@@ -125,6 +128,7 @@ export default {
   }),
   mounted() {
     this.postId = this.$route.params.postId;
+    this.groupId = this.$route.params.groupId
 
     this.postGetApiCall()
   },
@@ -149,7 +153,7 @@ export default {
       await this.axios.post("http://localhost:8080/api/v1/comments", this.commentCreateRequest);
       this.$router.go(this.$router.currentRoute)
     },
-    getCommentCreatedAt(createdAt) {
+    getCreatedAtToString(createdAt) {
       const commentCreatedAt = new Date(createdAt);
       const now = new Date();
 
@@ -167,6 +171,9 @@ export default {
       }
 
       return str;
+    },
+    moveToPostList() {
+      this.$router.push("/group/"+this.groupId)
     }
   }
 }
