@@ -94,6 +94,7 @@ export default {
   },
   data:() => ({
     editor: null,
+    content: null,
   }),
   mounted() {
     this.editor = new Editor({
@@ -101,11 +102,20 @@ export default {
       extensions: [
         StarterKit,
       ],
+      onUpdate: (({editor}) => {
+        this.content = editor.getHTML();
+        this.$emit('content', this.content);
+    })
     })
   },
   beforeUnmount() {
     this.editor.destroy()
   },
+  methods: {
+    contentUpdate(e) {
+      this.$emit('content', e.target.value)
+    }
+  }
 }
 </script>
 
