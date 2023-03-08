@@ -50,6 +50,9 @@ import {useLoginStore} from "@/LoginStore";
 export default {
   name: "StudyGroupCreate",
   watch: {
+    groupCreateRequest() {
+      console.log(this.groupCreateRequest)
+    }
   },
   setup() {
     const loginStore = useLoginStore();
@@ -77,10 +80,6 @@ export default {
         value: "HIGH"
       },
       {
-        title: "독서",
-        value: "BOOK"
-      },
-      {
         title: "어학",
         value: "LANG"
       },
@@ -93,12 +92,16 @@ export default {
         value: "IT"
       },
       {
-        title: "기타",
-        value: "ETC"
-      },
-      {
         title: "공무원",
         value: "GOV"
+      },
+      {
+        title: "독서",
+        value: "BOOK"
+      },
+      {
+        title: "기타",
+        value: "ETC"
       }
     ],
     headcount: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]

@@ -41,7 +41,7 @@
           <v-card-subtitle v-text="group.category"></v-card-subtitle>
         </v-card-item>
         <v-card-text>
-          {{group.memberCount}} / {{group.headcount}}
+          {{group.memberSize}} / {{group.headcount}}
         </v-card-text>
         <v-card-actions>
           <v-chip-group>
