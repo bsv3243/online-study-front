@@ -81,16 +81,26 @@ export default {
     startTime: "정보 없음",
     endTime: "정보 없음",
     joinedAt: "정보 없음",
+    intervalId: null,
 
     //complete
     dataReady: false,
   }),
+  watch: {
+    member() {
+      console.log(this.member)
+
+      this.joinedAt = this.getJoinedAt(this.member.groupMember.joinedAt)
+      this.changeIcon(this.member.activeTicket);
+      this.getTime(this.getStudyTime(this.member));
+    }
+  },
   mounted() {
     console.log(this.member)
 
     this.joinedAt = this.getJoinedAt(this.member.groupMember.joinedAt)
     this.changeIcon(this.member.activeTicket);
-    this.studyTime = this.getTime(this.getStudyTime(this.member));
+    this.getTime(this.getStudyTime(this.member));
   },
   methods: {
     getTime(seconds) {
@@ -104,7 +114,25 @@ export default {
         min = "0" + min;
       }
 
-      return hour + " : " + min
+      let sec = seconds%60;
+      this.studyTime = hour + " : " +min;
+
+      if(this.member.activeTicket != null) {
+        this.intervalId = setInterval(() => {
+          sec++;
+          if (sec >= 60) {
+            min++;
+            sec = 0;
+          }
+          if (min >= 60) {
+            hour++;
+            min = 0;
+          }
+          this.studyTime = hour + " : " + min
+        }, 1000)
+      } else {
+        clearInterval(this.intervalId)
+      }
     },
     getTimeHM(date) {
       const hours = date.getHours();
@@ -151,7 +179,7 @@ export default {
       const date = new Date();
 
       let startTime = new Date()
-      let endTime = new Date().setDate(date.getDate()-1);
+      let endTime = new Date(date.setDate(date.getDate()-1));
       let flag = false;
 
       //만료된 티켓, 활성화된 티켓의 활성 시간(초)를 모두 더하여 총 공부 시간을 구한다.
@@ -161,8 +189,12 @@ export default {
           flag = true;
 
           studyTime += ticket.activeTime;
-          startTime = ticket.startTime < startTime ? ticket.startTime : startTime; //시작 시간이 더 작으면 변경
-          endTime = ticket.endTime > endTime ? ticket.endTime : endTime; //종료 시간이 더 크면 변경
+
+          const ticketStartTime = new Date(ticket.startTime.substring(0, 19));
+          const ticketEndTime = new Date(ticket.endTime.substring(0, 19));
+
+          startTime = ticketStartTime < startTime ? ticketStartTime : startTime; //시작 시간이 더 작으면 변경
+          endTime = ticketEndTime > endTime ? ticketEndTime : endTime; //종료 시간이 더 크면 변경
         }
       }
       if(member.activeTicket !== null) {

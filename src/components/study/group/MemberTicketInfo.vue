@@ -6,14 +6,17 @@
       </div>
       <div class="d-flex justify-space-between" v-if="selectedStudy.name">
         <p class="studyInfo" v-text="selectedStudy.name"></p>
-        <p class="largeInfo" v-text="getTime(selectedStudy.studyTime)"></p>
+        <p class="largeInfo" v-text="studyTime"></p>
       </div>
     </v-card-text>
     <v-card-actions>
       <select-study-menu @study="setStudy"/>
       <v-spacer/>
-      <v-btn @click="ticketCreateApiCall">
+      <v-btn @click="ticketCreateApiCall" v-if="!hasActiveTicket">
         시작
+      </v-btn>
+      <v-btn @click="ticketUpdateApiCall" v-if="hasActiveTicket">
+        중지
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -32,6 +35,10 @@ export default {
   },
   data:() => ({
     selectedStudy: [],
+    intervalId: null,
+    studyTime: null,
+
+    hasActiveTicket: false,
     //axios
     //request
     ticketCreateRequest: {
@@ -44,8 +51,12 @@ export default {
       date: new Date().toISOString().substring(0, 10),
       days: 1
     },
+    ticketId: null,
+    ticketUpdateRequest: {
+      status: "END",
+    },
     //response
-    members: [
+    member: [
       {
         memberId: 1,
         nickname: "member",
@@ -60,6 +71,7 @@ export default {
 
     const result = await this.ticketsGetApiCall();
     const member = result.data[0];
+    this.member = member;
 
     if(member.activeTicket !== null) {
       const study = member.activeTicket.study;
@@ -79,11 +91,19 @@ export default {
 
       this.selectedStudy = study;
       this.selectedStudy.studyTime = studyTime;
+
+      this.getTime(studyTime);
+
+      this.ticketId = member.activeTicket.ticketId
+      this.hasActiveTicket = true;
     }
 
     this.dataReady = true
   },
   methods: {
+    emitData(str, data) {
+      this.$emit(str, data);
+    },
     setMemberStudies(value) {
       this.memberStudies = value;
     },
@@ -91,17 +111,31 @@ export default {
       this.selectedStudy = value;
     },
     getTime(seconds) {
-      let hours;
-      let mins;
-      if(seconds === undefined) {
-        hours = 0;
-        mins = 0;
-      } else {
-        hours = Math.floor(seconds/3600);
-        mins = Math.floor((seconds/60) % 60);
-      }
+      let hour =0;
+      let min = 0;
+      if(seconds !== undefined)  {
+        hour = Math.floor(seconds/3600);
+        min = Math.floor((seconds/60) % 60);
 
-      return hours + "시간 " + mins + "분";
+        if(this.member.activeTicket !== null) {
+          let sec = seconds % 60;
+          this.studyTime = hour + "시간 " + min + "분 ";
+          this.intervalId = setInterval(() => {
+            sec++;
+            if (sec >= 60) {
+              min++;
+              sec = 0;
+            }
+            if (min >= 60) {
+              hour++;
+              min = 0;
+            }
+            this.studyTime = hour + "시간 " + min + "분"
+          }, 1000)
+        } else {
+          clearInterval(this.intervalId)
+        }
+      }
     },
     async ticketCreateApiCall() {
       if(this.selectedStudy instanceof Array) {
@@ -114,14 +148,32 @@ export default {
       try {
         const response = await this.axios.post("http://localhost:8080/api/v1/tickets", this.ticketCreateRequest);
 
-        console.log(response)
-        console.log(response.data.data);
+        this.ticketId = response.data.data;
+
+        this.emitData("ticketId", this.ticketId);
+
+        this.hasActiveTicket = true;
 
         return response.data;
       } catch (err) {
         console.log("잠시 후에 다시 시도해주세요.");
 
         this.$global.printError(err)
+      }
+    },
+    async ticketUpdateApiCall() {
+      this.ticketUpdateRequest.status = "END"
+      clearInterval(this.intervalId)
+      try {
+        const response = await this.axios
+            .post("http://localhost:8080/api/v1/ticket/" + this.ticketId, this.ticketUpdateRequest);
+
+        const ticketId = response.data.data;
+
+        this.emitData("ticketId", ticketId);
+        this.hasActiveTicket = false;
+      } catch (err) {
+        console.log(err);
       }
     },
     async ticketsGetApiCall() {

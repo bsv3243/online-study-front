@@ -137,9 +137,11 @@ export default {
         hours = 0;
         mins = 0;
       } else {
-        hours = time / 3600;
-        mins = (time / 60) % 60;
+        hours = Math.floor(time / 3600);
+        mins = Math.floor((time / 60) % 60);
       }
+
+
 
       return hours + "시간 " + mins + "분"
     },

@@ -24,7 +24,7 @@
         </v-card>
       </v-col>
       <v-col cols="5">
-        <member-ticket-info :group="group"/>
+        <member-ticket-info @ticketId="send" :group="group"/>
       </v-col>
     </v-row>
 
@@ -43,6 +43,9 @@
 </template>
 
 <script>
+import Stomp from "webstomp-client"
+import SockJS from "sockjs-client"
+
 import StudyMember from "@/components/study/group/StudyMember";
 import MemberTicketInfo from "@/components/study/group/MemberTicketInfo";
 export default {
@@ -61,6 +64,10 @@ export default {
 
     img: require('@/assets/img/study_icon.png'),
     memberStudies: [],
+    ticketId: null,
+
+    //stomp
+    stompClient: null,
 
     //axios
     //request
@@ -81,6 +88,9 @@ export default {
     //axios complete
     dataReady: false,
   }),
+  created() {
+    this.connect()
+  },
   async mounted() {
     const result = await this.ticketsGetApiCall();
     this.members = result.data;
@@ -95,6 +105,9 @@ export default {
 
     this.dataReady = true
 
+  },
+  unmounted() {
+    this.disconnect()
   },
   methods: {
     test() {
@@ -137,6 +150,47 @@ export default {
         this.$global.printError(err)
       }
     },
+    connect() {
+      const sockJS = new SockJS("http://localhost:8080/ws");
+      this.stompClient = Stomp.over(sockJS)
+
+      this.stompClient.connect(
+          {},
+          frame => {
+            console.log("connected");
+            this.stompClient.subscribe("/sub/group/" + this.group.groupId, response => {
+              console.log("응답: ", response)
+              console.log("응답 데이터: ", JSON.parse(response.body))
+              const result = JSON.parse(response.body);
+              let data = result.data;
+
+              const groupMember = this.group.groupMembers.find(member => member.memberId === data.memberId);
+              data.groupMember = groupMember;
+
+              const idx = this.members.findIndex(member => member.memberId===data.memberId);
+              this.members[idx] = data;
+
+              console.log(this.members)
+            });
+          },
+          error => {
+            console.log("connecting fail")
+          }
+      )
+    },
+    disconnect() {
+      this.stompClient.disconnect(frame => {
+
+      }, {})
+    },
+    send(ticketId) {
+      let message = {
+        ticketId: ticketId,
+        groupId: this.group.groupId,
+      }
+
+      this.stompClient.send("/pub/groups", JSON.stringify(message))
+    }
   }
 }
 </script>
