@@ -5,7 +5,7 @@
         <v-row>
           <v-col cols="2">
             <v-btn v-if="!isMember"
-                   @click="isMember=true"
+                   @click="groupJoinApiCall"
                    min-height="9vh"
                    block
                    variant="elevated">
@@ -23,12 +23,12 @@
             <v-list class="mt-2" density="compact" nav>
               <v-list-item title="공부방" value="room" @click="select='room'"></v-list-item>
               <v-list-item title="커뮤니티" value="community" @click="select='community'"></v-list-item>
-              <v-list-item title="탈퇴하기" v-if="isMember" @click="isMember=false"></v-list-item>
+              <v-list-item title="탈퇴하기" v-if="isMember" @click="groupQuitApiCall"></v-list-item>
             </v-list>
           </v-col>
           <v-col>
             <StudyGroupInfo :group="group" v-if="dataReady"/>
-            <StudyRoom :group="group" v-if="select==='room' && dataReady"/>
+            <StudyRoom :is-member="isMember" :group="group" v-if="select==='room' && dataReady"/>
             <StudyCommunity :group="group" v-if="select==='community' && dataReady"/>
           </v-col>
         </v-row>
@@ -44,16 +44,29 @@ import { mdiDeskLampOn } from '@mdi/js';
 import StudyRoom from "@/components/study/group/StudyRoom";
 import StudyCommunity from "@/components/study/group/StudyCommunity";
 import StudyGroupInfo from "@/components/study/group/StudyGroupInfo";
+import {useMemberStore} from "@/store/MemberStore";
 export default {
   name: "StudyGroup",
   components: {SvgIcon, StudyGroupInfo, StudyCommunity, StudyRoom},
-  mounted() {
+  setup() {
+    const memberStore = useMemberStore();
+
+    return {memberStore};
+  },
+  async mounted() {
     this.groupId = this.$route.params.groupId;
-    this.groupGetApiCall()
+    await this.groupGetApiCall()
+
+    if(this.group.groupMembers.some(groupMember => groupMember.memberId===this.memberStore.getMemberId)) {
+      this.isMember = true
+    }
   },
   watch: {
     select(value) {
       console.log(value);
+    },
+    async isMember() {
+      await this.groupGetApiCall()
     }
   },
   data: () => ({
@@ -90,11 +103,21 @@ export default {
       const response = await this.axios.get("http://localhost:8080/api/v1/group/" + this.groupId);
       this.group = response.data.data;
 
-      console.log(this.group)
 
       this.dataReady = true
+    },
+    async groupJoinApiCall() {
+      await this.axios.post("http://localhost:8080/api/v1/group/"+this.groupId+ "/join");
+
+      this.isMember = true;
+    },
+    async groupQuitApiCall() {
+      await this.axios.post("http://localhost:8080/api/v1/group/"+this.groupId + "/quit");
+
+      this.isMember = false;
     }
-  }
+  },
+
 }
 </script>
 

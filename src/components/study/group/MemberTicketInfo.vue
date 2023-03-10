@@ -6,14 +6,21 @@
       </div>
       <div class="d-flex justify-space-between" v-if="selectedStudy.name">
         <p class="studyInfo" v-text="selectedStudy.name"></p>
-        <p class="largeInfo" v-text="getTime(selectedStudy.studyTime)"></p>
+        <p class="largeInfo" v-text="studyTime"></p>
       </div>
     </v-card-text>
     <v-card-actions>
-      <select-study-menu @study="setStudy"/>
+      <select-study-menu @study="setStudy" v-if="!hasActiveTicket"/>
+      <v-btn v-if="hasActiveTicket && !isRest" @click="ticketCreateApiCall('REST')">
+        휴식
+      </v-btn>
+      <v-btn @click="ticketCreateApiCall('STUDY')" v-if="isRest">다시 시작</v-btn>
       <v-spacer/>
-      <v-btn @click="ticketCreateApiCall">
+      <v-btn @click="ticketCreateApiCall('STUDY')" v-if="!hasActiveTicket">
         시작
+      </v-btn>
+      <v-btn @click="ticketUpdateApiCall" v-if="hasActiveTicket">
+        중지
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -32,6 +39,12 @@ export default {
   },
   data:() => ({
     selectedStudy: [],
+    intervalId: null,
+    studyTime: null,
+    isStudy: false,
+    isRest: false,
+
+    hasActiveTicket: false,
     //axios
     //request
     ticketCreateRequest: {
@@ -44,8 +57,12 @@ export default {
       date: new Date().toISOString().substring(0, 10),
       days: 1
     },
+    ticketId: null,
+    ticketUpdateRequest: {
+      status: "END",
+    },
     //response
-    members: [
+    member: [
       {
         memberId: 1,
         nickname: "member",
@@ -60,30 +77,43 @@ export default {
 
     const result = await this.ticketsGetApiCall();
     const member = result.data[0];
+    this.member = member;
 
     if(member.activeTicket !== null) {
       const study = member.activeTicket.study;
 
       let studyTime = 0;
 
-      const start = this.getDate(member.activeTicket.startTime).getTime();
-      const now = new Date().getTime();
+      if(member.activeTicket.status === "STUDY") {
+        const start = this.getDate(member.activeTicket.startTime).getTime();
+        const now = new Date().getTime();
 
-      studyTime += Math.floor(now/1000) - Math.floor(start/1000);
+        studyTime += Math.floor(now / 1000) - Math.floor(start / 1000);
+      } else {
+        this.isRest = true;
+      }
 
       for(const ticket of member.expiredTickets) {
-        if(ticket.study.studyId === study.studyId) {
+        if(ticket.study.studyId === study.studyId && ticket.status==="STUDY") {
           studyTime += ticket.activeTime;
         }
       }
 
       this.selectedStudy = study;
       this.selectedStudy.studyTime = studyTime;
+
+      this.getTime(studyTime);
+
+      this.ticketId = member.activeTicket.ticketId
+      this.hasActiveTicket = true;
     }
 
     this.dataReady = true
   },
   methods: {
+    emitData(str, data) {
+      this.$emit(str, data);
+    },
     setMemberStudies(value) {
       this.memberStudies = value;
     },
@@ -91,37 +121,87 @@ export default {
       this.selectedStudy = value;
     },
     getTime(seconds) {
-      let hours;
-      let mins;
-      if(seconds === undefined) {
-        hours = 0;
-        mins = 0;
-      } else {
-        hours = Math.floor(seconds/3600);
-        mins = Math.floor((seconds/60) % 60);
-      }
+      clearInterval(this.intervalId)
+      let hour =0;
+      let min = 0;
+      if(seconds !== undefined)  {
+        hour = Math.floor(seconds/3600);
+        min = Math.floor((seconds/60) % 60);
 
-      return hours + "시간 " + mins + "분";
+        if(this.member.activeTicket !== null && this.member.activeTicket.status === "STUDY") {
+          let sec = seconds % 60;
+          this.setStudyTime(hour, min, sec)
+          if(this.member.activeTicket.status === "STUDY") {
+            this.intervalId = setInterval(() => {
+              sec++;
+              this.setStudyTime(hour, min, sec)
+            }, 1000)
+          }
+        } else {
+          this.studyTime = hour + "시간 " + min + "분"
+          clearInterval(this.intervalId)
+        }
+      }
     },
-    async ticketCreateApiCall() {
+    setStudyTime(hour, min, sec) {
+      if (sec >= 60) {
+        min++;
+        sec = 0;
+      }
+      if (min >= 60) {
+        hour++;
+        min = 0;
+      }
+      if(min < 10) {
+        min = "0" + min;
+      }
+      this.studyTime = hour + "시간 " + min + "분"
+    },
+    async ticketCreateApiCall(status) {
       if(this.selectedStudy instanceof Array) {
         alert("공부가 지정되지 않았습니다.");
         return;
       }
       this.ticketCreateRequest.studyId = this.selectedStudy.studyId;
       this.ticketCreateRequest.groupId = this.group.groupId
+      this.ticketCreateRequest.status = status
+
+      if(this.member.activeTicket !== null) {
+        await this.ticketUpdateApiCall()
+      }
+      this.isRest = status !== "STUDY";
 
       try {
         const response = await this.axios.post("http://localhost:8080/api/v1/tickets", this.ticketCreateRequest);
 
-        console.log(response)
-        console.log(response.data.data);
+        this.ticketId = response.data.data;
+
+        this.emitData("ticketId", this.ticketId);
+
+        this.hasActiveTicket = true;
+
+        this.emitData("isStudying", true);
 
         return response.data;
       } catch (err) {
         console.log("잠시 후에 다시 시도해주세요.");
 
         this.$global.printError(err)
+      }
+    },
+    async ticketUpdateApiCall() {
+      this.ticketUpdateRequest.status = "END"
+      clearInterval(this.intervalId)
+      try {
+        const response = await this.axios
+            .post("http://localhost:8080/api/v1/ticket/" + this.ticketId, this.ticketUpdateRequest);
+
+        const ticketId = response.data.data;
+
+        this.emitData("ticketId", ticketId);
+        this.hasActiveTicket = false;
+      } catch (err) {
+        console.log(err);
       }
     },
     async ticketsGetApiCall() {

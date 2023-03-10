@@ -56,7 +56,6 @@ export default {
   }),
   mounted() {
     this.master = this.group.groupMembers.find(m => m.role === "MASTER")
-    console.log(this.group)
   },
   methods: {
 

@@ -81,7 +81,6 @@ export default {
 
     const studies = this.getStudiesFromCookie("studies");
 
-    console.log(this.studies, studies)
 
     for(const study of studies) {
       if(!this.studies.some(o => o.studyId===study.studyId)) {
@@ -89,7 +88,6 @@ export default {
       }
     }
 
-    console.log(this.studies)
     this.dataReady = true;
   },
   methods: {
@@ -114,7 +112,6 @@ export default {
 
         // this.studies = response.data.data
 
-        console.log(this.studies)
 
         return response.data;
       } catch (err) {
@@ -124,7 +121,6 @@ export default {
     getStudiesFromCookie(str) {
       if(this.$cookies.isKey(str)) {
         const value = this.$cookies.get(str);
-        console.log(value)
         return value
       } else {
         return []
@@ -137,9 +133,11 @@ export default {
         hours = 0;
         mins = 0;
       } else {
-        hours = time / 3600;
-        mins = (time / 60) % 60;
+        hours = Math.floor(time / 3600);
+        mins = Math.floor((time / 60) % 60);
       }
+
+
 
       return hours + "시간 " + mins + "분"
     },

@@ -19,8 +19,8 @@ export default {
         let hour = 0;
         let min = 0;
         if(seconds !== undefined) {
-            hour = seconds/3600;
-            min = (seconds/60)%60;
+            hour = Math.floor(seconds/3600);
+            min = Math.floor((seconds/60)%60);
 
             if(min < 10) {
                 min = "0" + min;
@@ -36,5 +36,13 @@ export default {
      */
     getDate(isoString) {
         return new Date(isoString.substring(0, 19));
+    },
+    getActiveTicketStudyTime(ticket) {
+        const date = new Date(ticket.startTime.substring(0, 19));
+
+        const seconds = Math.floor(date.getTime() / 1000);
+        const now = Math.floor(new Date().getTime() / 1000);
+
+        return now - seconds;
     }
 }
