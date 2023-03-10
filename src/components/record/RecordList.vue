@@ -16,7 +16,7 @@
           <v-card class="pa-3" min-height="35vh">
             공부시간 차트
             <div style="height: 30vh">
-              <StackedBarChart :member-ticket="memberTicket" v-if="dataReady"/>
+              <StackedBarChart :member-ticket="memberTicket" :ticketGetRequest="ticketGetRequest" v-if="dataReady"/>
             </div>
           </v-card>
         </v-col>
@@ -24,7 +24,7 @@
           <v-card class="pa-3" min-height="35vh">
             공부 시작 종료 시간 차트
             <div style="height: 30vh">
-            <FloatingBarChar :member-ticket="memberTicket" v-if="dataReady"/>
+            <FloatingBarChar :member-ticket="memberTicket" :request="ticketGetRequest" v-if="dataReady"/>
             </div>
           </v-card>
         </v-col>
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import StackedBarChart from "@/components/record/StackedBarChart";
+import StackedBarChart from "@/components/record/chart/StackedBarChart";
 import FloatingBarChar from "@/components/record/chart/FloatingBarChar";
 import PieChart from "@/components/record/chart/PieChart";
 import {useMemberStore} from "@/store/MemberStore";
@@ -95,8 +95,16 @@ export default {
   methods: {
     async ticketGetApiCall(days) {
       this.ticketGetRequest.days = days;
-      let date = this.ticketGetRequest.date;
+
+      const now = new Date();
+      if(now.getHours() < 4) {
+        now.setDate(now.getDate()-1);
+      }
+
+      let date = now;
       date.setDate(date.getDate()-days)
+
+      this.ticketGetRequest.date = now;
 
       if(!this.loginStore.isLogin) {
         this.dataReady = true
