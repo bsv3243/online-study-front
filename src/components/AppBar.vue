@@ -23,17 +23,21 @@
 
 <script>
 import {useLoginStore} from "@/LoginStore";
+import {useMemberStore} from "@/store/MemberStore";
 import LoginForm from "@/components/login/LoginForm";
 export default {
   name: "AppBar",
   components: {LoginForm},
   setup() {
     const loginStore = useLoginStore();
+    const memberStore = useMemberStore();
 
-    return {loginStore};
+    return {loginStore, memberStore};
   },
   mounted() {
-    console.log(this.loginStore.test)
+    if(this.loginStore.isLogin) {
+      this.memberGetApiCall()
+    }
   },
   data: () => ({
     links: [
@@ -58,6 +62,15 @@ export default {
         this.$router.push("/")
       } catch (err) {
         alert("잠시 후에 다시 시도해주세요.")
+      }
+    },
+    async memberGetApiCall() {
+      try {
+        const response = await this.axios.get("http://localhost:8080/api/v1/member");
+        this.memberStore.setMember(response.data.data);
+      } catch (err) {
+        this.loginStore.logout();
+        alert("세션 정보가 만료되었습니다.")
       }
     }
   }

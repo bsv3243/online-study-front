@@ -84,7 +84,7 @@ export default {
       try {
         await this.axios.post("http://localhost:8080/api/v1/login", this.loginRequest)
 
-        this.loginStore.login();
+        this.loginStore.setLogin();
 
         this.$router.push("/")
       } catch (err) {
