@@ -19,7 +19,7 @@
             v-for="study in studies"
             :key="study.studyId"
             :value="study.id"
-            @click="selectedStudy=study"
+            @click="emitData('study', study)"
             active-color="primary"
         >
           <v-list-item-title>{{study.name}}</v-list-item-title>
@@ -78,6 +78,7 @@ export default {
 
     this.studies = response.data
 
+
     const studies = this.getStudiesFromCookie("studies");
 
     console.log(this.studies, studies)
@@ -92,6 +93,9 @@ export default {
     this.dataReady = true;
   },
   methods: {
+    emitData(str, data) {
+      this.$emit(str, data);
+    },
     async studiesGetApiCall() {
       let date = new Date();
       if(date.getHours()<4) { //하루의 시작은 5시
@@ -134,7 +138,7 @@ export default {
         mins = 0;
       } else {
         hours = time / 3600;
-        mins = time / 60;
+        mins = (time / 60) % 60;
       }
 
       return hours + "시간 " + mins + "분"
