@@ -58,6 +58,8 @@ export default {
     await this.groupGetApiCall()
 
     if(this.group.groupMembers.some(groupMember => groupMember.memberId===this.memberStore.getMemberId)) {
+      const find = this.group.groupMembers.find(groupMember => groupMember.memberId===this.memberStore.getMemberId);
+      this.joinedAt = find.joinedAt.substring(0, 10)
       this.isMember = true
     }
   },
