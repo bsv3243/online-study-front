@@ -21,12 +21,14 @@
     "pinia-plugin-persistedstate": "^3.0.2",
     "roboto-fontface": "*",
     "sass-loader": "^13.2.0",
+    "sockjs-client": "^1.6.1",
     "vue": "^3.2.13",
     "vue-chartjs": "^5.2.0",
     "vue-cookies": "^1.8.2",
     "vue-router": "^4.1.6",
     "vuetify": "^3.0.0-beta.0",
-    "webfontloader": "^1.0.0"
+    "webfontloader": "^1.0.0",
+    "webstomp-client": "^1.2.6"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
