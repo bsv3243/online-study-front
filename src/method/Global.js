@@ -44,5 +44,12 @@ export default {
         const now = Math.floor(new Date().getTime() / 1000);
 
         return now - seconds;
+    },
+    getOrDefault(map, key) {
+        if(map.has(key)) {
+            return map.get(key);
+        } else {
+            return 0;
+        }
     }
 }
