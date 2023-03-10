@@ -23,7 +23,8 @@
             <v-list class="mt-2" density="compact" nav>
               <v-list-item title="공부방" value="room" @click="select='room'"></v-list-item>
               <v-list-item title="커뮤니티" value="community" @click="select='community'"></v-list-item>
-              <v-list-item title="탈퇴하기" v-if="isMember" @click="groupQuitApiCall"></v-list-item>
+              <v-list-item title="탈퇴하기" v-if="isMember && !isMaster" @click="groupQuitApiCall"></v-list-item>
+              <v-list-item title="그룹 삭제" v-if="isMaster" @click="groupDeleteApiCall"></v-list-item>
             </v-list>
           </v-col>
           <v-col>
@@ -58,6 +59,11 @@ export default {
     await this.groupGetApiCall()
 
     if(this.group.groupMembers.some(groupMember => groupMember.memberId===this.memberStore.getMemberId)) {
+      const find = this.group.groupMembers.find(groupMember => groupMember.memberId===this.memberStore.getMemberId);
+      if(find.role === "MASTER") {
+        this.isMaster = true
+      }
+      this.joinedAt = find.joinedAt.substring(0, 10)
       this.isMember = true
     }
   },
@@ -75,6 +81,7 @@ export default {
     joinedAt: "2023-01-23",
     groupId: null,
     dataReady: false,
+    isMaster: false,
     mdiDeskLampOn,
 
     //axiosResponse 데이터
@@ -100,11 +107,14 @@ export default {
   }),
   methods: {
     async groupGetApiCall() {
-      const response = await this.axios.get("http://localhost:8080/api/v1/group/" + this.groupId);
-      this.group = response.data.data;
+      try {
+        const response = await this.axios.get("http://localhost:8080/api/v1/group/" + this.groupId);
+        this.group = response.data.data;
 
-
-      this.dataReady = true
+        this.dataReady = true
+      }catch (err) {
+        this.$router.push("/")
+      }
     },
     async groupJoinApiCall() {
       await this.axios.post("http://localhost:8080/api/v1/group/"+this.groupId+ "/join");
@@ -115,6 +125,16 @@ export default {
       await this.axios.post("http://localhost:8080/api/v1/group/"+this.groupId + "/quit");
 
       this.isMember = false;
+    },
+    async groupDeleteApiCall() {
+      try{
+        await this.axios.delete("http://localhost:8080/api/v1/group/"+this.groupId)
+
+        this.$router.push("/group")
+      } catch (err) {
+        alert("잠시 후에 다시 시도해주세요.")
+        console.log(err)
+      }
     }
   },
 
