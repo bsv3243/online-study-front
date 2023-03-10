@@ -46,11 +46,11 @@
         <v-card-actions>
           <v-chip-group>
             <v-chip
-                v-for="tag in group.studies"
+                v-for="tag in group.studies.slice(0, 3)"
                 :key="tag.id"
                 size="small"
                 variant="text">
-              #{{tag.title}}
+              # {{tag.name}}
             </v-chip>
           </v-chip-group>
         </v-card-actions>
@@ -62,7 +62,8 @@
       <div class="text-center">
         <v-pagination
           v-model="page"
-          :length="5">
+          :length="response.totalPages"
+          :total-visible="7">
         </v-pagination>
       </div>
     </v-container>
@@ -137,8 +138,10 @@ export default {
       hasPrevious: false,
     }
   }),
-  mounted() {
-    this.groupsGetApiCall()
+  async mounted() {
+    await this.groupsGetApiCall()
+
+    console.log(this.groups)
 
     this.dataReady = true;
   },
