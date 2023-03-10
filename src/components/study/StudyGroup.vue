@@ -44,16 +44,29 @@ import { mdiDeskLampOn } from '@mdi/js';
 import StudyRoom from "@/components/study/group/StudyRoom";
 import StudyCommunity from "@/components/study/group/StudyCommunity";
 import StudyGroupInfo from "@/components/study/group/StudyGroupInfo";
+import {useMemberStore} from "@/store/MemberStore";
 export default {
   name: "StudyGroup",
   components: {SvgIcon, StudyGroupInfo, StudyCommunity, StudyRoom},
-  mounted() {
+  setup() {
+    const memberStore = useMemberStore();
+
+    return {memberStore};
+  },
+  async mounted() {
     this.groupId = this.$route.params.groupId;
-    this.groupGetApiCall()
+    await this.groupGetApiCall()
+
+    if(this.group.groupMembers.some(groupMember => groupMember.memberId===this.memberStore.getMemberId)) {
+      this.isMember = true
+    }
   },
   watch: {
     select(value) {
       console.log(value);
+    },
+    async isMember() {
+      await this.groupGetApiCall()
     }
   },
   data: () => ({
