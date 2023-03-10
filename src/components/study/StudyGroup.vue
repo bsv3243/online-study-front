@@ -27,9 +27,9 @@
             </v-list>
           </v-col>
           <v-col>
-            <StudyGroupInfo :group="group"/>
-            <StudyRoom v-if="select==='room'"/>
-            <StudyCommunity v-if="select==='community'"/>
+            <StudyGroupInfo :group="group" v-if="dataReady"/>
+            <StudyRoom :group="group" v-if="select==='room' && dataReady"/>
+            <StudyCommunity :group="group" v-if="select==='community' && dataReady"/>
           </v-col>
         </v-row>
       </v-container>
@@ -49,6 +49,7 @@ export default {
   components: {SvgIcon, StudyGroupInfo, StudyCommunity, StudyRoom},
   mounted() {
     this.groupId = this.$route.params.groupId;
+    this.groupGetApiCall()
   },
   watch: {
     select(value) {
@@ -90,6 +91,8 @@ export default {
       this.group = response.data.data;
 
       console.log(this.group)
+
+      this.dataReady = true
     }
   }
 }
