@@ -137,7 +137,6 @@ export default {
       const response = await this.axios.get("http://localhost:8080/api/v1/post/"+this.postId);
       this.post = response.data.data;
 
-      console.log(this.post);
 
       this.createdAtYMD = this.post.createdAt.substring(0, 10);
       this.createdAtHMS = this.post.createdAt.substring(11, 19);

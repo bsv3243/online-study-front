@@ -109,14 +109,12 @@ export default {
       this.$emit('selectedStudy', data)
     },
     addStudy() {
-      console.log(this.selectedGroupStudy)
 
       const findStudy = this.findStudies[this.selectedGroupStudy];
       this.emitData(findStudy)
 
       this.addStudyToCookie(findStudy);
 
-      console.log(findStudy)
 
       this.selectedGroupStudy = []
       this.showDialog = false;
@@ -126,7 +124,6 @@ export default {
       try {
         const response = await this.axios.post("http://localhost:8080/api/v1/studies", this.studyCreateRequest);
 
-        console.log(response.data);
         const createdStudyId = response.data.data;
         this.findStudies.push({studyId: createdStudyId, name: this.studyCreateRequest.name})
         this.studyCreateRequest.name = null
@@ -150,7 +147,6 @@ export default {
         this.findStudies = response.data.data;
         this.dataReady = true;
 
-        console.log(this.findStudies)
 
         return response.data;
       } catch (err) {
@@ -169,7 +165,6 @@ export default {
 
       studies.push(study);
 
-      console.log(studies)
 
       this.$cookies.set("studies", JSON.stringify(studies))
 

@@ -88,7 +88,6 @@ export default {
   }),
   watch: {
     member() {
-      console.log(this.member)
 
       this.joinedAt = this.getJoinedAt(this.member.groupMember.joinedAt)
       this.changeIcon(this.member.activeTicket);
@@ -96,7 +95,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.member)
 
     this.joinedAt = this.getJoinedAt(this.member.groupMember.joinedAt)
     this.changeIcon(this.member.activeTicket);

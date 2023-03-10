@@ -157,9 +157,7 @@ export default {
             }
       });
       this.response = response.data;
-      console.log(this.response)
       this.groups = this.response.data
-      console.log(this.groups);
     }
   }
 }

@@ -81,7 +81,6 @@ export default {
 
     const studies = this.getStudiesFromCookie("studies");
 
-    console.log(this.studies, studies)
 
     for(const study of studies) {
       if(!this.studies.some(o => o.studyId===study.studyId)) {
@@ -89,7 +88,6 @@ export default {
       }
     }
 
-    console.log(this.studies)
     this.dataReady = true;
   },
   methods: {
@@ -114,7 +112,6 @@ export default {
 
         // this.studies = response.data.data
 
-        console.log(this.studies)
 
         return response.data;
       } catch (err) {
@@ -124,7 +121,6 @@ export default {
     getStudiesFromCookie(str) {
       if(this.$cookies.isKey(str)) {
         const value = this.$cookies.get(str);
-        console.log(value)
         return value
       } else {
         return []

@@ -106,7 +106,6 @@ export default {
   mounted() {
     this.postsGetApiCall()
 
-    console.log(this.group)
   },
   methods: {
     async postsGetApiCall() {
@@ -124,7 +123,6 @@ export default {
       this.posts = response.data.data;
       this.response = response.data;
 
-      console.log(this.posts)
 
       this.totalPages = this.response.totalPages+1
 
