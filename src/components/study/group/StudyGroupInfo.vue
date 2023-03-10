@@ -25,7 +25,7 @@
                 <div>그룹장: {{ master.username }}</div>
               </v-col>
               <v-col>
-                <div>그룹 생성일: {{group.createdAt.toISOString().substring(0, 10)}}</div>
+                <div>그룹 생성일: {{group.createdAt}}</div>
               </v-col>
               <v-col>
                 <div>인원수: {{group.groupMembers.length}} / {{group.headcount}}</div>
@@ -56,6 +56,7 @@ export default {
   }),
   mounted() {
     this.master = this.group.groupMembers.find(m => m.role === "MASTER")
+    console.log(this.group)
   },
   methods: {
 

@@ -54,18 +54,6 @@ export default {
 
     return {loginStore, loginDialog}
   },
-  watch: {
-
-  },
-  data:() => ({
-    loginRequest: {
-      username: "",
-      password: ""
-    },
-
-    //axios Ready
-    dataReady: false,
-  }),
   mounted() {
     this.loginStore.setLoginDialog(false)
 
@@ -79,6 +67,18 @@ export default {
 
     this.dataReady = true
   },
+  watch: {
+
+  },
+  data:() => ({
+    loginRequest: {
+      username: "",
+      password: ""
+    },
+
+    //axios Ready
+    dataReady: false,
+  }),
   methods: {
     async loginApiCall() {
       try {
