@@ -7,14 +7,15 @@
             <v-select
                 label="카테고리"
                 :items="categories"
+                v-model="postCreateRequest.category"
                 item-title="name"
-                item-value="name" density="comfortable" variant="outlined">
+                item-value="value" density="comfortable" variant="outlined">
             </v-select>
           </div>
           <div class="title-container">
-            <input class="title-form" placeholder="제목을 입력해주세요."/>
+            <input class="title-form" placeholder="제목을 입력해주세요." v-model="this.postCreateRequest.title"/>
           </div>
-            <tiptap/>
+            <tiptap @content="contentUpdate"/>
           <div class="post-bottom">
             <div>
               <v-dialog
@@ -46,7 +47,7 @@
               <v-btn variant="outlined">
                 취소
               </v-btn>
-              <v-btn variant="outlined" class="bg-green-lighten-1">
+              <v-btn variant="outlined" class="bg-green-lighten-1" @click="postCreateApiCall">
                 글쓰기
               </v-btn>
             </div>
@@ -62,24 +63,20 @@ import Tiptap from "@/components/editor/Tiptap";
 export default {
   name: "WritePost",
   components: {Tiptap},
-  watch: {
-    selectedTags() {
-      // this.selectedTags.forEach(i => {
-      //   console.log(this.studies[i]);
-      // })
-    }
-  },
   data:() => ({
     selectTagsDialog: false,
     categories: [
       {
-        name: "잡담"
+        name: "잡담",
+        value: "CHAT"
       },
       {
-        name: "질문"
+        name: "질문",
+        value: "QUESTION"
       },
       {
-        name: "정보"
+        name: "정보",
+        value: "INFO"
       }
     ],
     studies: [
@@ -92,8 +89,58 @@ export default {
         title: "vue.js"
       }
     ],
-    selectedTags: []
-  })
+    selectedTags: [],
+    content: null,
+
+    //axios
+    //api call complete
+    dataReady: false,
+
+    //request
+    postCreateRequest: {
+      title: null,
+      content: null,
+      category: null,
+      studyIds: null,
+      groupId: null,
+    }
+  }),
+  mounted() {
+    this.postCreateRequest.groupId = this.$route.params.groupId
+  },
+  watch: {
+    content() {
+      this.postCreateRequest.content = this.content
+    }
+  },
+  methods: {
+    contentUpdate(content) {
+      this.content = content;
+    },
+    async postCreateApiCall() {
+      if(this.postCreateRequest.title.length < 1) {
+        alert("제목은 공란일 수 없습니다.")
+        return;
+      }
+      if(this.postCreateRequest.content.length < 1) {
+        alert("본문은 공란일 수 없습니다.");
+        return;
+      }
+      if(this.postCreateRequest.category == null) {
+        alert("카테고리는 필수입니다.");
+        return;
+      }
+      if(this.postCreateRequest.groupId == null) {
+        alert("그룹ID가 지정되지 않았습니다.");
+        return;
+      }
+
+      const response = await this.axios.post("http://localhost:8080/api/v1/posts", this.postCreateRequest);
+      const postId = response.data.data;
+
+      this.$router.push("/group/" + this.postCreateRequest.groupId + "/post/" + postId);
+    }
+  }
 }
 </script>
 

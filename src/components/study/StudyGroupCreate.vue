@@ -1,10 +1,11 @@
 <template>
+  <v-btn @click="btnClick">그룹 만들기</v-btn>
   <v-dialog
       v-model="showDialog"
       max-width="350">
-    <template v-slot:activator="{ props }">
-      <v-btn v-bind="props">그룹 만들기</v-btn>
-    </template>
+<!--    <template v-slot:activator="{ props }">-->
+<!--      <v-btn v-bind="props" @click="btnClick">그룹 만들기</v-btn>-->
+<!--    </template>-->
     <v-card>
       <v-card-title>
         그룹 만들기
@@ -44,9 +45,19 @@
 </template>
 
 <script>
+import {useLoginStore} from "@/LoginStore";
+
 export default {
   name: "StudyGroupCreate",
   watch: {
+    groupCreateRequest() {
+      console.log(this.groupCreateRequest)
+    }
+  },
+  setup() {
+    const loginStore = useLoginStore();
+
+    return {loginStore};
   },
   data:() => ({
     showDialog: false,
@@ -57,7 +68,7 @@ export default {
     },
     categories: [
       {
-        title: "취직",
+        title: "취업",
         value: "JOB"
       },
       {
@@ -65,13 +76,45 @@ export default {
         value: "UNIV",
       },
       {
+        title: "고등학생",
+        value: "HIGH"
+      },
+      {
+        title: "어학",
+        value: "LANG"
+      },
+      {
+        title: "자격증",
+        value: "CERT"
+      },
+      {
+        title: "IT",
+        value: "IT"
+      },
+      {
+        title: "공무원",
+        value: "GOV"
+      },
+      {
         title: "독서",
         value: "BOOK"
+      },
+      {
+        title: "기타",
+        value: "ETC"
       }
     ],
     headcount: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
   }),
   methods: {
+    btnClick() {
+      if(!this.loginStore.isLogin) {
+        alert("로그인 후 이용 가능합니다.");
+        this.loginStore.setLoginDialog(true);
+      } else {
+        this.showDialog=true
+      }
+    },
     async groupCreateApiCall() {
       if(this.groupCreateRequest.name.length < 1 || this.groupCreateRequest.name.length > 20) {
         alert("그룹 이름은 1자 이상, 20자 이하여야 합니다.")
@@ -88,7 +131,8 @@ export default {
 
       try{
         const response = await this.axios.post("http://localhost:8080/api/v1/groups", this.groupCreateRequest);
-        this.$router.push("/group/" + response.data);
+        const groupId = response.data.data;
+        this.$router.push("/group/" + groupId);
       } catch (err) {
         alert("잠시 후에 다시 시도해주세요.");
         console.log(err);

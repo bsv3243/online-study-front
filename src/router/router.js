@@ -9,10 +9,10 @@ import WritePost from "@/components/community/WritePost";
 const routes = [
     {path: "/", name: "AppStudy", component: AppStudy},
     {path: "/record", name: "AppRecord", component: AppRecord},
-    {path: "/group", name: "StudyGroup", component: StudyGroup},
+    {path: "/group/:groupId", name: "StudyGroup", component: StudyGroup},
     {path: "/signup", name: "SignupForm", component: SignupForm},
-    {path: "/post", name: "CommunityPost", component: CommunityPost},
-    {path: "/post/new", name: "WritePost", component: WritePost}
+    {path: "/group/:groupId/post/:postId", name: "CommunityPost", component: CommunityPost},
+    {path: "/group/:groupId/post/new", name: "WritePost", component: WritePost}
 ]
 
 const router = createRouter({

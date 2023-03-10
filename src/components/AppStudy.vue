@@ -8,7 +8,7 @@
            <StudyTags class="mt-10"/>
          </div>
          <v-col>
-            <StudyList/>
+            <StudyGroupList/>
          </v-col>
        </v-row>
      </v-container>
@@ -17,12 +17,12 @@
 </template>
 
 <script>
-import StudyList from "@/components/study/StudyList";
+import StudyGroupList from "@/components/study/StudyGroupList";
 import StudySort from "@/components/study/StudySort";
 import StudyTags from "@/components/study/StudyTags";
 export default {
   name: "AppStudy",
-  components: {StudyTags, StudySort, StudyList}
+  components: {StudyTags, StudySort, StudyGroupList}
 }
 </script>
 

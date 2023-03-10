@@ -5,29 +5,40 @@
       max-width="350">
     <template v-slot:activator="{ props }">
       <v-btn v-bind="props">
-        공부 추가
+        공부 선택
       </v-btn>
     </template>
     <v-card>
       <v-card-title>
-        공부 추가
+        공부 검색
       </v-card-title>
       <v-card-text>
-        <v-text-field
-            v-model="newStudy.name"
-            density="compact"
-            variant="solo"
-            label="공부 이름"></v-text-field>
+        <div class="info">
+          <div class="info-inner">
+            <icon-info/>
+            <span>공부가 검색되지 않을 경우 직접입력 해주시길 바랍니다.</span>
+          </div>
+        </div>
+        <div class="div-form d-flex">
+          <input v-model="studiesGetRequest.name" placeholder="두 글자 이상 입력해주세요.">
+          <button @keyup.enter="studiesGetApiCall" @click="studiesGetApiCall"><icon-search/></button>
+        </div>
         <v-chip-group
             v-model="selectedGroupStudy"
+            v-if="dataReady"
             filter>
           <v-chip
-              v-for="study in groupStudies"
-              :key="study.id"
-              @click="newStudy.name=''">
+              v-for="study in findStudies"
+              :key="study.id">
             {{study.name}}
           </v-chip>
         </v-chip-group>
+        <v-divider class="mb-3"/>
+        <div class="direct-form">
+          <span>직접 입력</span>
+          <input class="form" v-model="studyCreateRequest.name"/>
+          <v-btn @click="studyCreateApiCall">확인</v-btn>
+        </div>
       </v-card-text>
       <v-card-actions>
         <v-spacer/>
@@ -43,8 +54,15 @@
 </template>
 
 <script>
+import IconInfo from "@/components/icons/IconInfo";
+import IconSearch from "@/components/icons/IconSearch";
+
 export default {
   name: "AddStudyDialog",
+  components:{
+    IconInfo,
+    IconSearch
+  },
   props: ['studies'],
   data:() => ({
     showDialog: false,
@@ -59,56 +77,170 @@ export default {
       }
     ],
     selectedGroupStudy: [],
-    newStudy: {
-      name: ""
-    }
+
+    //axios
+    //get request
+    studiesGetRequest: {
+      page: 0,
+      size: 10,
+      name: null,
+      date: null,
+      days: null
+    },
+    //create request
+    studyCreateRequest: {
+      name: null,
+    },
+    //get response
+    findStudies: [
+      {
+        studyId: 1,
+        name: "테스트",
+      }
+    ],
+    //axios complete
+    dataReady: false,
   }),
+  mounted() {
+    this.studiesGetApiCall();
+  },
   methods: {
     emitData(data) {
       this.$emit('selectedStudy', data)
     },
     addStudy() {
-      if(this.newStudy.name.length === 0) {
-        let groupStudy = this.groupStudies[this.selectedGroupStudy]
-        groupStudy.time = "0시간 0분"
+      console.log(this.selectedGroupStudy)
 
-        if(this.studies.filter(study => study.id===groupStudy.id).length === 0) {
-          // this.studies.push(groupStudy)
-          this.emitData(groupStudy)
-        }
+      const findStudy = this.findStudies[this.selectedGroupStudy];
+      this.emitData(findStudy)
 
-        this.addStudyApiCall(groupStudy.id)
-      } else if(this.newStudy.name.length > 0) {
+      this.addStudyToCookie(findStudy);
 
-        this.createStudyApiCall()
-      }
+      console.log(findStudy)
 
       this.selectedGroupStudy = []
       this.showDialog = false;
     },
 
-    async createStudyApiCall() {
+    async studyCreateApiCall() {
       try {
-        console.log("axios post")
-        // const response = await this.axios.post("http://localhost:8080/api/v1/studies", this.newStudy);
-        // return response.data;
+        const response = await this.axios.post("http://localhost:8080/api/v1/studies", this.studyCreateRequest);
+
+        console.log(response.data);
+        const createdStudyId = response.data.data;
+        this.findStudies.push({studyId: createdStudyId, name: this.studyCreateRequest.name})
+        this.studyCreateRequest.name = null
+        return response.data;
       } catch (err) {
         alert("잠시 후에 다시 시도해주세요.")
       }
     },
-    async addStudyApiCall(studyId) {
+    async studiesGetApiCall() {
       try {
-        console.log(this.studies)
-        console.log("axios post data: ", studyId)
-        // await this.axios.post("http://localhost:8080/api/v1/addStudies", studyId);
+        const response = await this.axios.get("http://localhost:8080/api/v1/studies", {
+          params: {
+            page: this.studiesGetRequest.page,
+            size: this.studiesGetRequest.size,
+            name: this.studiesGetRequest.name,
+            date: this.studiesGetRequest.date,
+            days: this.studiesGetRequest.days
+          }
+        });
+
+        this.findStudies = response.data.data;
+        this.dataReady = true;
+
+        console.log(this.findStudies)
+
+        return response.data;
       } catch (err) {
         alert("잠시 후에 다시 시도해주세요.")
       }
+    },
+    addStudyToCookie(study) {
+      if(!this.$cookies.isKey("studies")) {
+        this.$cookies.set("studies", JSON.stringify([study]))
+      }
+      const studies = this.$cookies.get("studies");
+
+      if(studies.some(o => o.studyId===study.studyId)) {
+        return;
+      }
+
+      studies.push(study);
+
+      console.log(studies)
+
+      this.$cookies.set("studies", JSON.stringify(studies))
+
+/*      const value = JSON.stringify([study]);
+      this.$cookies.set("test", value);
+      const test = this.$cookies.get("test");
+      test.push(study)
+      console.log(test)*/
+      // if(!this.$cookies.isKey("studies")) {
+      //   this.$cookies.set("studies", JSON.stringify(study));
+      // } else {
+      //   const value = JSON.parse(this.$cookies.get("studies"));
+      //   console.log(JSON.parse(this.$cookies.get("studies")))
+      //
+      //   value.push(study);
+      //
+      //   this.$cookies.set("studies", JSON.stringify(value));
+      // }
     }
   }
 }
 </script>
 
 <style scoped>
-
+.info {
+  margin-bottom: 0.7rem;
+  font-size: 0.9rem;
+  color: #999999;
+}
+.info-inner {
+  display: flex;
+  gap: 0.5rem;
+}
+.form {
+  height: 4vh;
+  width: 100%;
+  font-size: 16px;
+  padding-left: 0.5rem;
+  outline: 1px solid #e7e7e7;
+}
+.form:focus {
+  outline: 2px solid #616161;
+}
+.div-form {
+  width: 100%;
+  outline: 1px solid #e7e7e7;
+  border-radius: 0;
+}
+.div-form:focus-within {
+  outline: 2px solid #616161;
+}
+.div-form input {
+  height: 4vh;
+  width: 100%;
+  font-size: 16px;
+  padding-left: 0.5rem;
+}
+.div-form input:focus {
+  outline: none;
+}
+.div-form button:hover {
+  background-color: inherit;
+}
+.direct-form {
+  display: flex;
+  align-content: center;
+  gap: 1rem;
+}
+.direct-form span {
+  display: flex;
+  align-self: center;
+  white-space: nowrap;
+}
 </style>

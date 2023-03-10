@@ -24,67 +24,14 @@
         </v-card>
       </v-col>
       <v-col cols="5">
-        <v-card min-height="12vh">
-          <v-card-text>
-            <div v-if="selectedStudy instanceof Array">
-              <p class="text-center">선택된 공부가 없습니다.</p>
-            </div>
-            <div class="d-flex justify-space-between" v-if="selectedStudy.name">
-              <p class="studyInfo" v-text="selectedStudy.name"></p>
-              <p class="largeInfo" v-text="selectedStudy.time"></p>
-            </div>
-          </v-card-text>
-          <v-card-actions>
-            <v-menu
-                v-model="menu"
-              :close-on-content-click="false">
-              <template v-slot:activator="{props}">
-                <v-btn v-bind="props">
-                  변경
-                </v-btn>
-              </template>
-              <v-card class="pa-2" min-width="300">
-<!--                <v-form>-->
-<!--                  <v-text-field label="검색" density="compact" variant="solo">-->
-<!--                  </v-text-field>-->
-<!--                </v-form>-->
-
-                <v-list
-                    nav>
-                  <v-list-item
-                    v-for="study in studies"
-                    :key="study.id"
-                    :value="study.id"
-                    @click="selectedStudy=study"
-                    active-color="primary"
-                  >
-                    <v-list-item-title>{{study.name}}</v-list-item-title>
-                    <v-list-item-subtitle>{{study.time}}</v-list-item-subtitle>
-                  </v-list-item>
-                </v-list>
-
-                <v-card-actions>
-                  <v-btn variant="text" @click="test">
-                    닫기
-                  </v-btn>
-                  <v-spacer/>
-                  <AddStudyDialog :studies="studies" @selectedStudy="addStudy"/>
-                </v-card-actions>
-              </v-card>
-            </v-menu>
-            <v-spacer/>
-            <v-btn>
-              시작
-            </v-btn>
-          </v-card-actions>
-        </v-card>
+        <member-ticket-info :group="group"/>
       </v-col>
     </v-row>
 
 
     <v-row>
       <v-col>
-        <div class="room">
+        <div class="room" v-if="dataReady">
           <StudyMember
               v-for="(member, i) in members"
               :key="i"
@@ -97,67 +44,99 @@
 
 <script>
 import StudyMember from "@/components/study/group/StudyMember";
-import AddStudyDialog from "@/components/study/group/AddStudyDialog";
+import MemberTicketInfo from "@/components/study/group/MemberTicketInfo";
 export default {
   name: "StudyRoom",
-  components: {AddStudyDialog, StudyMember},
+  components: {MemberTicketInfo, StudyMember},
   watch: {
     notSelected() {
     }
+  },
+  props: {
+    group: Object
   },
   data: () => ({
     menu: false,
     showDialog: false,
 
     img: require('@/assets/img/study_icon.png'),
+    memberStudies: [],
+
+    //axios
+    //request
+    ticketsGetRequest: {
+      groupId: null,
+      date: new Date().toISOString().substring(0, 10),
+      days: 1
+    },
+    //response
     members: [
       {
-        nickname: "테스터",
-        time: "05:55"
-      },
-      {
-        nickname: "테스터",
-        time: "05:55"
-      },
-      {
-        nickname: "테스터",
-        time: "05:55"
-      },
-      {
-        nickname: "테스터",
-        time: "05:55"
-      },
-      {
-        nickname: "테스터",
-        time: "05:55"
-      },
-      {
-        nickname: "테스터",
-        time: "05:55"
-      },
-    ],
-    studies: [
-      {
-        id: "1",
-        name: "스프링",
-        time: "3시간 30분"
-      },
-      {
-        id: "2",
-        name: "백엔드",
-        time: "2시간 12분"
+        memberId: 1,
+        nickname: "member",
+        activeTicket: Object,
+        expiredTickets: Array
       }
     ],
-    selectedStudy: [],
-
+    //axios complete
+    dataReady: false,
   }),
+  async mounted() {
+    const result = await this.ticketsGetApiCall();
+    this.members = result.data;
+
+    let groupMembers = this.group.groupMembers;
+    for(let groupMember of groupMembers) {
+      const find = this.members.find(member => member.memberId === groupMember.memberId);
+      find.groupMember = groupMember;
+    }
+
+    console.log(this.memberStudies)
+
+    this.dataReady = true
+
+  },
   methods: {
     test() {
       this.menu = false;
     },
-    addStudy(value) {
-      this.studies.push(value)
-    }
+    setMemberStudies(value) {
+      this.memberStudies = value;
+    },
+    getTime(seconds) {
+      let hours;
+      let mins;
+      if(seconds === undefined) {
+        hours = 0;
+        mins = 0;
+      } else {
+        hours = seconds/3600;
+        mins = (seconds/60) % 60;
+      }
+
+      return hours + "시간 " + mins + "분";
+    },
+    async ticketsGetApiCall(groupId) {
+      if(groupId !== null) {
+        this.ticketsGetRequest.groupId = groupId
+      }
+
+      try{
+        const response = await this.axios.get("http://localhost:8080/api/v1/tickets", {
+          params: {
+            groupId: this.ticketsGetRequest.groupId,
+            date: this.ticketsGetRequest.date,
+            days: this.ticketsGetRequest.days
+          }
+        });
+
+        return response.data;
+      } catch (err) {
+        alert("잠시 후에 다시 시도해주세요.");
+
+        this.$global.printError(err)
+      }
+    },
   }
 }
 </script>

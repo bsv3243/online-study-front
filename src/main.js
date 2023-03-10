@@ -7,6 +7,7 @@ import axios from 'axios'
 import VueCookies from "vue-cookies"
 import {createPinia} from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import GlobalPlugin from "@/method/GlobalPlugin";
 
 
 loadFonts()
@@ -23,6 +24,7 @@ app
     .use(pinia)
     .use(VueCookies)
     .use(vuetify)
+    .use(GlobalPlugin)
     .mount('#app')
 
 // createApp(App)
