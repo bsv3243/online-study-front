@@ -88,6 +88,7 @@ export default {
   }),
   watch: {
     member() {
+      clearInterval(this.intervalId)
 
       this.joinedAt = this.getJoinedAt(this.member.groupMember.joinedAt)
       this.changeIcon(this.member.activeTicket);
@@ -95,6 +96,7 @@ export default {
     }
   },
   mounted() {
+    clearInterval(this.intervalId)
 
     this.joinedAt = this.getJoinedAt(this.member.groupMember.joinedAt)
     this.changeIcon(this.member.activeTicket);
@@ -115,22 +117,27 @@ export default {
       let sec = seconds%60;
       this.studyTime = hour + " : " +min;
 
-      if(this.member.activeTicket != null) {
+      if(this.member.activeTicket != null && this.member.activeTicket.status === "STUDY") {
         this.intervalId = setInterval(() => {
           sec++;
-          if (sec >= 60) {
-            min++;
-            sec = 0;
-          }
-          if (min >= 60) {
-            hour++;
-            min = 0;
-          }
-          this.studyTime = hour + " : " + min
+          console.log(sec)
+          this.setStudyTime(hour, min, sec)
         }, 1000)
       } else {
         clearInterval(this.intervalId)
       }
+    },
+    setStudyTime(hour, min, sec) {
+      if (sec >= 60) {
+        min++;
+        sec = 0;
+      }
+      if (min >= 60) {
+        hour++;
+        min = 0;
+      }
+
+      this.studyTime = hour + " : " + min
     },
     getTimeHM(date) {
       const hours = date.getHours();
@@ -213,7 +220,14 @@ export default {
 
       if(flag) {
         this.startTime = this.getTimeHM(startTime)
-        this.endTime = this.endTime==="공부 중" ? "공부 중" : this.getTimeHM(endTime);
+        this.endTime = this.getTimeHM(endTime);
+      }
+      if(member.activeTicket !== null) {
+        if(member.activeTicket.status === "STUDY"){
+          this.endTime = "공부 중"
+        } else if(member.activeTicket.status === "REST") {
+          this.endTime = "휴식 중"
+        }
       }
 
       return studyTime;

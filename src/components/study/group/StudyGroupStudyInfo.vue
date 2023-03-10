@@ -62,11 +62,12 @@ export default {
       return hour + "시간 " + min + "분";
     },
     init() {
+      clearInterval(this.intervalId)
       let studyTime = 0;
       let num = 0;
       let attended = 0;
       for(const member of this.members) {
-        if(member.activeTicket !== null) {
+        if(member.activeTicket !== null && member.activeTicket.status === "STUDY") {
           num++;
 
           const date = new Date(member.activeTicket.startTime.substring(0, 19));
@@ -88,6 +89,7 @@ export default {
       this.studyTime = this.getTimeHM(studyTime)
       if(this.studyMemberSize !== 0) {
         this.intervalId = setInterval(() => {
+          studyTime++;
           this.studyTime = this.getTimeHM(studyTime);
         }, 1000 * this.members.length)
       } else {
