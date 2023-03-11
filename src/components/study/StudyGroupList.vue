@@ -90,6 +90,15 @@ export default {
         this.groupsGetRequest.studyIds = studyIds
       }
       this.groupsGetApiCall()
+    },
+    select() {
+      if(this.select === "ALL") {
+        this.groupsGetRequest.category = null;
+      } else {
+        this.groupsGetRequest.category = this.select
+      }
+
+      this.groupsGetApiCall()
     }
   },
   data: () => ({
@@ -117,7 +126,7 @@ export default {
         value: "ALL"
       },
       {
-        title: "취직",
+        title: "취업",
         value: "JOB"
       },
       {
@@ -125,11 +134,35 @@ export default {
         value: "UNIV",
       },
       {
+        title: "고등학생",
+        value: "HIGH"
+      },
+      {
+        title: "어학",
+        value: "LANG"
+      },
+      {
+        title: "자격증",
+        value: "CERT"
+      },
+      {
+        title: "IT",
+        value: "IT"
+      },
+      {
+        title: "공무원",
+        value: "GOV"
+      },
+      {
         title: "독서",
         value: "BOOK"
+      },
+      {
+        title: "기타",
+        value: "ETC"
       }
     ],
-    select: {title: "전체", value: "ALL"},
+    select: "ALL",
     page: 1,
     search: "",
 
@@ -165,6 +198,7 @@ export default {
   methods: {
     async groupsGetApiCall() {
       this.groupsGetRequest.page = this.page-1;
+
       const response
           = await this.axios.get("http://localhost:8080/api/v1/groups", {
             params: {
