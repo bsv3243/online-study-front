@@ -79,6 +79,7 @@ export default {
 
       //라벨 날짜 별로 지정
       const labels = [];
+      date.setDate(date.getDate()-1)
       for(let i=1; i<=this.ticketGetRequest.days; i++) {
         let month = date.getMonth()+1;
         let monthDate = date.getDate()+i;

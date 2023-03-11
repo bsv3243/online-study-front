@@ -102,7 +102,7 @@ export default {
       }
 
       let date = now;
-      date.setDate(date.getDate()-days)
+      date.setDate(date.getDate()-days+1)
 
       this.ticketGetRequest.date = now;
 
@@ -118,9 +118,11 @@ export default {
           }
         });
 
-        this.memberTicket = response.data.data
 
-        console.log(response.data.data)
+        const data = response.data.data;
+        if(data.length === 1) {
+          this.memberTicket = data[0]
+        }
 
         this.dataReady = true;
       } catch (err) {

@@ -37,13 +37,30 @@ export default {
       maintainAspectRatio: false,
       scales: {
         y: {
+          min: 3600*5,
           ticks: {
             callback: function (v) {
-              return new Date(v * 1000).toISOString().substring(11, 19)
+              const date = new Date(0);
+              date.setTime(0)
+              date.setHours(date.getHours()-9)
+              date.setSeconds(v)
+
+              console.log(date)
+
+              let hours = date.getHours();
+              let minutes = date.getMinutes();
+
+
+              if(hours < 10) {
+                hours = "0" + hours
+              }
+              if(minutes < 10) {
+                minutes = "0" +minutes
+              }
+
+              return hours + "시 " + minutes + "분";
             },
-            stepSize: 120 * 60,
-            min: 0,
-            // max: 3600*24
+            stepSize: 3600*2,
           }
         }
       },
@@ -125,7 +142,7 @@ export default {
         const endTimeSeconds = Math.floor((endTime - date.getTime())/1000);
 
         labels[idx] = label.substring(6, 10)
-        data.push([startTimeSeconds, endTimeSeconds])
+        data.push([startTimeSeconds+3600*5, endTimeSeconds+3600*5])
         idx++;
       }
 
