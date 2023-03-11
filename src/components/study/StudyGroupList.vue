@@ -75,7 +75,22 @@ import StudyGroupCreate from "@/components/study/StudyGroupCreate";
 export default {
   name: "StudyList",
   components: {StudyGroupCreate},
+  props: {
+    studyIds: Array
+  },
   watch: {
+    studyIds() {
+      this.groupsGetRequest.studyIds = this.studyIds
+
+      const str = JSON.stringify(this.studyIds);
+      const studyIds = str.substring(1, str.length-1);
+      if(studyIds.trim() === "") {
+        this.groupsGetRequest.studyIds = null;
+      }else {
+        this.groupsGetRequest.studyIds = studyIds
+      }
+      this.groupsGetApiCall()
+    }
   },
   data: () => ({
     groups: [
@@ -117,6 +132,8 @@ export default {
     select: {title: "전체", value: "ALL"},
     page: 1,
     search: "",
+
+    //axios
     groupsGetRequest: {
       page: 0,
       size: 12,
@@ -157,7 +174,8 @@ export default {
               search: this.groupsGetRequest.search,
               studyIds: this.groupsGetRequest.studyIds,
               orderBy: this.groupsGetRequest.orderBy
-            }
+            },
+
       });
       this.response = response.data;
       this.groups = this.response.data
