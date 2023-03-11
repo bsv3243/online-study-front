@@ -43,6 +43,9 @@ export default {
     studyTime: null,
     isStudy: false,
     isRest: false,
+    hour: 0,
+    min: 0,
+    sec: 0,
 
     hasActiveTicket: false,
     //axios
@@ -122,35 +125,39 @@ export default {
     },
     getTime(seconds) {
       clearInterval(this.intervalId)
-      let hour =0;
-      let min = 0;
       if(seconds !== undefined)  {
-        hour = Math.floor(seconds/3600);
-        min = Math.floor((seconds/60) % 60);
+        this.hour = Math.floor(seconds/3600);
+        this.min = Math.floor((seconds/60) % 60);
 
         if(this.member.activeTicket !== null && this.member.activeTicket.status === "STUDY") {
-          let sec = seconds % 60;
-          this.setStudyTime(hour, min, sec)
+          this.sec = seconds % 60;
+          this.setStudyTime()
           if(this.member.activeTicket.status === "STUDY") {
             this.intervalId = setInterval(() => {
-              sec++;
-              this.setStudyTime(hour, min, sec)
+              this.sec++;
+              this.setStudyTime()
             }, 1000)
           }
         } else {
-          this.studyTime = hour + "시간 " + min + "분"
+          this.studyTime = this.hour + "시간 " + this.min + "분"
           clearInterval(this.intervalId)
         }
       }
     },
-    setStudyTime(hour, min, sec) {
+    setStudyTime() {
+      let sec = this.sec;
+      let min = this.min;
+      let hour = this.hour;
+
       if (sec >= 60) {
         min++;
-        sec = 0;
+        this.min++;
+        this.sec = sec - 60;
       }
       if (min >= 60) {
         hour++;
-        min = 0;
+        this.hour++;
+        this.min = min - 60;
       }
       if(min < 10) {
         min = "0" + min;

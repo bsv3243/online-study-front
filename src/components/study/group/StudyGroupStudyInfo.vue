@@ -33,6 +33,9 @@ export default {
     studyTime: 0,
     intervalId: null,
     attendRate: 0,
+    hour: 0,
+    min: 0,
+    sec: 0,
   }),
   mounted() {
     this.init()
@@ -91,7 +94,7 @@ export default {
         this.intervalId = setInterval(() => {
           studyTime++;
           this.studyTime = this.getTimeHM(studyTime);
-        }, 1000 * this.members.length)
+        }, 10 * this.members.length)
       } else {
         clearInterval(this.intervalId)
       }

@@ -6,7 +6,7 @@
 <!--  </v-card>-->
   <v-menu open-on-hover>
     <template v-slot:activator="{props}" >
-      <v-card v-bind="props" id="desk" class="text-center ma-2">
+      <v-card v-bind="props" id="desk" class="text-center ma-2 study-member">
             <v-card-title>{{member.nickname}}</v-card-title>
             <img :src="img" alt=""/>
             <v-card-text class="py-2">{{studyTime}}</v-card-text>
@@ -82,6 +82,9 @@ export default {
     endTime: "정보 없음",
     joinedAt: "정보 없음",
     intervalId: null,
+    hour: 0,
+    min: 0,
+    sec: 0,
 
     //complete
     dataReady: false,
@@ -104,37 +107,46 @@ export default {
   },
   methods: {
     getTime(seconds) {
-      let hour = 0;
-      let min = 0;
+      this.hour = 0;
+      this.min = 0;
       if(seconds !== undefined) {
-        hour = Math.floor(seconds/3600);
-        min = Math.floor((seconds/60)%60);
+        this.hour = Math.floor(seconds/3600);
+        this.min = Math.floor((seconds/60)%60);
       }
 
-      let sec = seconds%60;
-      this.setStudyTime(hour, min, sec);
+      this.sec = seconds%60;
+      this.setStudyTime();
 
       if(this.member.activeTicket != null && this.member.activeTicket.status === "STUDY") {
         this.intervalId = setInterval(() => {
-          sec++;
-          this.setStudyTime(hour, min, sec)
+          this.sec++;
+          this.setStudyTime()
         }, 1000)
       } else {
         clearInterval(this.intervalId)
       }
     },
-    setStudyTime(hour, min, sec) {
+    setStudyTime() {
+      let sec = this.sec;
+      let min = this.min;
+      let hour = this.hour;
+
       if (sec >= 60) {
         min++;
-        sec = 0;
+        this.min++;
+        this.sec = sec - 60;
       }
       if (min >= 60) {
         hour++;
-        min = 0;
+        this.hour++;
+        this.min = min - 60;
       }
+
+
       if(min < 10) {
         min = "0" + min
       }
+
 
       this.studyTime = hour + " : " + min
     },
@@ -236,5 +248,7 @@ export default {
 </script>
 
 <style scoped>
-
+.study-member {
+  min-width: 120px;
+}
 </style>
