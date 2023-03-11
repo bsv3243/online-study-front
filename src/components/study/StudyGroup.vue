@@ -24,7 +24,11 @@
               <v-list-item title="공부방" value="room" @click="select='room'"></v-list-item>
               <v-list-item title="커뮤니티" value="community" @click="select='community'"></v-list-item>
               <v-list-item title="탈퇴하기" v-if="isMember && !isMaster" @click="groupQuitApiCall"></v-list-item>
-              <v-list-item title="그룹 삭제" v-if="isMaster" @click="groupDeleteApiCall"></v-list-item>
+              <v-list-item title="그룹 관리" v-if="isMaster" @click="showManageDialog = true"></v-list-item>
+              <group-manage-dialog v-if="isMaster"
+                                   :show-manage-dialog="showManageDialog"
+                                   :group-id="groupId"
+                                   @emitFalse="setMangeDialogFalse"/>
             </v-list>
           </v-col>
           <v-col>
@@ -46,9 +50,10 @@ import StudyRoom from "@/components/study/group/StudyRoom";
 import StudyCommunity from "@/components/study/group/StudyCommunity";
 import StudyGroupInfo from "@/components/study/group/StudyGroupInfo";
 import {useMemberStore} from "@/store/MemberStore";
+import GroupManageDialog from "@/components/study/group/GroupManageDialog";
 export default {
   name: "StudyGroup",
-  components: {SvgIcon, StudyGroupInfo, StudyCommunity, StudyRoom},
+  components: {GroupManageDialog, SvgIcon, StudyGroupInfo, StudyCommunity, StudyRoom},
   setup() {
     const memberStore = useMemberStore();
 
@@ -83,6 +88,7 @@ export default {
     dataReady: false,
     isMaster: false,
     mdiDeskLampOn,
+    showManageDialog: false,
 
     //axiosResponse 데이터
     group: {
@@ -135,6 +141,9 @@ export default {
         alert("잠시 후에 다시 시도해주세요.")
         console.log(err)
       }
+    },
+    setMangeDialogFalse(value) {
+      this.showManageDialog = value
     }
   },
 
