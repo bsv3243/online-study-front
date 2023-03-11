@@ -19,9 +19,11 @@
             <v-text-field
                 label="검색"
                 v-model="search"
+                @keyup.enter = "groupsGetApiCall"
                 variant="outlined"
                 density="comfortable">
             </v-text-field>
+            <v-text-field style="display: none"></v-text-field>
           </v-form>
         </v-col>
         <v-spacer/>
@@ -198,7 +200,11 @@ export default {
   methods: {
     async groupsGetApiCall() {
       this.groupsGetRequest.page = this.page-1;
-
+      if(this.search.trim().length <= 0) {
+        this.groupsGetRequest.search = null;
+      } else {
+        this.groupsGetRequest.search = this.search
+      }
       const response
           = await this.axios.get("http://localhost:8080/api/v1/groups", {
             params: {
