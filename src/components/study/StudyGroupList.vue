@@ -19,9 +19,11 @@
             <v-text-field
                 label="검색"
                 v-model="search"
+                @keyup.enter = "groupsGetApiCall"
                 variant="outlined"
                 density="comfortable">
             </v-text-field>
+            <v-text-field style="display: none"></v-text-field>
           </v-form>
         </v-col>
         <v-spacer/>
@@ -46,11 +48,11 @@
         <v-card-actions>
           <v-chip-group>
             <v-chip
-                v-for="tag in group.studies"
+                v-for="tag in group.studies.slice(0, 3)"
                 :key="tag.id"
                 size="small"
                 variant="text">
-              #{{tag.title}}
+              # {{tag.name}}
             </v-chip>
           </v-chip-group>
         </v-card-actions>
@@ -62,7 +64,8 @@
       <div class="text-center">
         <v-pagination
           v-model="page"
-          :length="5">
+          :length="response.totalPages"
+          :total-visible="7">
         </v-pagination>
       </div>
     </v-container>
@@ -74,7 +77,31 @@ import StudyGroupCreate from "@/components/study/StudyGroupCreate";
 export default {
   name: "StudyList",
   components: {StudyGroupCreate},
+  props: {
+    studyIds: Array
+  },
   watch: {
+    studyIds() {
+      this.groupsGetRequest.studyIds = this.studyIds
+
+      const str = JSON.stringify(this.studyIds);
+      const studyIds = str.substring(1, str.length-1);
+      if(studyIds.trim() === "") {
+        this.groupsGetRequest.studyIds = null;
+      }else {
+        this.groupsGetRequest.studyIds = studyIds
+      }
+      this.groupsGetApiCall()
+    },
+    select() {
+      if(this.select === "ALL") {
+        this.groupsGetRequest.category = null;
+      } else {
+        this.groupsGetRequest.category = this.select
+      }
+
+      this.groupsGetApiCall()
+    }
   },
   data: () => ({
     groups: [
@@ -101,7 +128,7 @@ export default {
         value: "ALL"
       },
       {
-        title: "취직",
+        title: "취업",
         value: "JOB"
       },
       {
@@ -109,13 +136,39 @@ export default {
         value: "UNIV",
       },
       {
+        title: "고등학생",
+        value: "HIGH"
+      },
+      {
+        title: "어학",
+        value: "LANG"
+      },
+      {
+        title: "자격증",
+        value: "CERT"
+      },
+      {
+        title: "IT",
+        value: "IT"
+      },
+      {
+        title: "공무원",
+        value: "GOV"
+      },
+      {
         title: "독서",
         value: "BOOK"
+      },
+      {
+        title: "기타",
+        value: "ETC"
       }
     ],
-    select: {title: "전체", value: "ALL"},
+    select: "ALL",
     page: 1,
     search: "",
+
+    //axios
     groupsGetRequest: {
       page: 0,
       size: 12,
@@ -137,14 +190,21 @@ export default {
       hasPrevious: false,
     }
   }),
-  mounted() {
-    this.groupsGetApiCall()
+  async mounted() {
+    await this.groupsGetApiCall()
+
+    console.log(this.groups)
 
     this.dataReady = true;
   },
   methods: {
     async groupsGetApiCall() {
       this.groupsGetRequest.page = this.page-1;
+      if(this.search.trim().length <= 0) {
+        this.groupsGetRequest.search = null;
+      } else {
+        this.groupsGetRequest.search = this.search
+      }
       const response
           = await this.axios.get("http://localhost:8080/api/v1/groups", {
             params: {
@@ -154,7 +214,8 @@ export default {
               search: this.groupsGetRequest.search,
               studyIds: this.groupsGetRequest.studyIds,
               orderBy: this.groupsGetRequest.orderBy
-            }
+            },
+
       });
       this.response = response.data;
       this.groups = this.response.data

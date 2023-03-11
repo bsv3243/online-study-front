@@ -4,21 +4,27 @@
       <v-row>
         <v-col>
           <v-form>
-            <v-text-field label="태그" variant="outlined" density="compact">
+            <v-text-field v-model="studiesGetRequest.name"
+                          @keyup.enter="studiesGetApiCall"
+                          label="태그"
+                          variant="outlined"
+                          density="compact">
 
             </v-text-field>
+            <v-text-field style="display: none"/>
           </v-form>
           <v-chip-group
               v-model="selected"
               column
-              multiple>
+              multiple v-if="dataReady">
             <v-chip
-              v-for="tag in tags"
+              v-for="tag in studies"
               :key="tag.id"
               variant="outlined"
               size="small"
+              @click="emitData(this.selected)"
               filter>
-              # {{tag.title}}
+              # {{tag.name}}
             </v-chip>
           </v-chip-group>
         </v-col>
@@ -45,12 +51,75 @@ export default {
         title: "vue.js"
       },
       {
-        id: 4,
+        id: 5,
         title: "테스트2"
       }
     ],
-    selected: [],
-  })
+    selected: [], //칩은 인덱스를 반환한다.
+
+    //axios
+    //request
+    studiesGetRequest: {
+      page: 0,
+      size: 10,
+      name: "",
+      date: null, //yyyy-MM-dd
+      days: null
+    },
+    //response
+    studies: Array,
+    study: {
+      studyId: 1,
+      name: "study",
+      studyTime: 1000,
+      startTime: "string",
+      endTime: "string"
+    },
+    //complete
+    dataReady: false,
+  }),
+  watch: {
+    selected() {
+      const arr = []
+      for(const idx of this.selected) {
+        arr.push(this.studies[idx].studyId)
+      }
+      this.emitData(arr)
+    }
+  },
+  async mounted() {
+    await this.studiesGetApiCall()
+
+    this.dataReady = true;
+  },
+  methods: {
+    emitData(data) {
+      this.$emit("studyIds", data);
+    },
+    //axios
+    async studiesGetApiCall() {
+      if(this.studiesGetRequest.name.trim().length <= 0) {
+        this.studiesGetRequest.name = null
+      }
+      try {
+        const response = await this.axios.get("http://localhost:8080/api/v1/studies", {
+          params: {
+            page: this.studiesGetRequest.page,
+            size: this.studiesGetRequest.size,
+            name: this.studiesGetRequest.name,
+            date: null,
+            days: null
+          }
+        });
+
+        this.studies = response.data.data
+        console.log(this.studies)
+      } catch (err) {
+        alert("잠시 후에 다시 시도해주세요.");
+        console.log(err);
+      }
+    }
+  }
 }
 </script>
 

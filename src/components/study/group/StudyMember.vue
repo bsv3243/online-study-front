@@ -108,19 +108,15 @@ export default {
       let min = 0;
       if(seconds !== undefined) {
         hour = Math.floor(seconds/3600);
-        min = Math.floor(seconds/60%60);
-      }
-      if(min < 10) {
-        min = "0" + min;
+        min = Math.floor((seconds/60)%60);
       }
 
       let sec = seconds%60;
-      this.studyTime = hour + " : " +min;
+      this.setStudyTime(hour, min, sec);
 
       if(this.member.activeTicket != null && this.member.activeTicket.status === "STUDY") {
         this.intervalId = setInterval(() => {
           sec++;
-          console.log(sec)
           this.setStudyTime(hour, min, sec)
         }, 1000)
       } else {
@@ -135,6 +131,9 @@ export default {
       if (min >= 60) {
         hour++;
         min = 0;
+      }
+      if(min < 10) {
+        min = "0" + min
       }
 
       this.studyTime = hour + " : " + min

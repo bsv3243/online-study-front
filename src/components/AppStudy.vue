@@ -5,10 +5,10 @@
        <v-row>
          <div class="left">
            <StudySort/>
-           <StudyTags class="mt-10"/>
+           <StudyTags class="mt-10" @studyIds="setStudyIds"/>
          </div>
          <v-col>
-            <StudyGroupList/>
+            <StudyGroupList :studyIds="studyIds"/>
          </v-col>
        </v-row>
      </v-container>
@@ -22,7 +22,15 @@ import StudySort from "@/components/study/StudySort";
 import StudyTags from "@/components/study/StudyTags";
 export default {
   name: "AppStudy",
-  components: {StudyTags, StudySort, StudyGroupList}
+  components: {StudyTags, StudySort, StudyGroupList},
+  data:() => ({
+    studyIds: [],
+  }),
+  methods: {
+    setStudyIds(value) {
+      this.studyIds = value
+    },
+  }
 }
 </script>
 
