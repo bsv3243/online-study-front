@@ -115,7 +115,7 @@ export default {
   methods: {
     async groupGetApiCall() {
       try {
-        const response = await this.axios.get("http://localhost:8080/api/v1/group/" + this.groupId);
+        const response = await this.axios.get("/api/v1/group/" + this.groupId);
         this.group = response.data.data;
 
         this.dataReady = true
