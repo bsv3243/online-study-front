@@ -25,9 +25,10 @@
               <v-list-item title="커뮤니티" value="community" @click="select='community'"></v-list-item>
               <v-list-item title="탈퇴하기" v-if="isMember && !isMaster" @click="groupQuitApiCall"></v-list-item>
               <v-list-item title="그룹 관리" v-if="isMaster" @click="showManageDialog = true"></v-list-item>
-              <group-manage-dialog v-if="isMaster"
+              <group-manage-dialog v-if="dataReady && isMaster"
                                    :show-manage-dialog="showManageDialog"
                                    :group-id="groupId"
+                                   :group="group"
                                    @emitFalse="setMangeDialogFalse"/>
             </v-list>
           </v-col>
@@ -123,18 +124,22 @@ export default {
       }
     },
     async groupJoinApiCall() {
-      await this.axios.post("http://localhost:8080/api/v1/group/"+this.groupId+ "/join");
+      try {
+        await this.axios.post("/api/v1/group/" + this.groupId + "/join");
 
-      this.isMember = true;
+        this.isMember = true;
+      } catch (err) {
+        console.log("잠시 후에 다시 시도해주세요.");
+      }
     },
     async groupQuitApiCall() {
-      await this.axios.post("http://localhost:8080/api/v1/group/"+this.groupId + "/quit");
+      await this.axios.post("/api/v1/group/"+this.groupId + "/quit");
 
       this.isMember = false;
     },
     async groupDeleteApiCall() {
       try{
-        await this.axios.delete("http://localhost:8080/api/v1/group/"+this.groupId)
+        await this.axios.delete("/api/v1/group/"+this.groupId)
 
         this.$router.push("/group")
       } catch (err) {

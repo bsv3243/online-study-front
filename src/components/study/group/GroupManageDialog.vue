@@ -14,7 +14,7 @@
           </div>
         </div>
         <div class="div-form d-flex">
-          <input placeholder="그룹에 대한 한 한줄 요약">
+          <input v-model="groupUpdateRequest.description" placeholder="그룹에 대한 한 한줄 요약">
         </div>
         <v-divider class="my-3"/>
         <div class="info">
@@ -26,6 +26,9 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer/>
+        <v-btn @click="groupUpdateApiCall">
+          수정
+        </v-btn>
         <v-btn @click="showDialog = false">
           닫기
         </v-btn>
@@ -44,7 +47,8 @@ export default {
   },
   props: {
     showManageDialog: Boolean,
-    groupId: Number
+    groupId: String,
+    group: Object
   },
   watch: {
     showManageDialog() {
@@ -60,16 +64,35 @@ export default {
     }
   },
   data:() => ({
-    showDialog: false
+    showDialog: false,
+    groupUpdateRequest: {
+      description: "",
+      headcount: null,
+    }
   }),
   methods: {
     emitFalse() {
       this.$emit("emitFalse", false)
     },
+    async groupUpdateApiCall() {
+      if(this.group.description === this.groupUpdateRequest.description) {
+        return;
+      }
+      if(this.group.headcount === this.groupUpdateRequest.headcount) {
+        return;
+      }
+      try {
+        await this.axios.post("/api/v1/group/" + this.groupId, this.groupUpdateRequest)
+
+        this.$router.push("/group/"+this.groupId)
+      } catch (err) {
+        console.log(err);
+      }
+    },
     async groupDeleteApiCall() {
       if(confirm("삭제하시겠습니까? \n삭제 후 되돌릴 수 없습니다.")) {
         try {
-          await this.axios.delete("http://localhost:8080/api/v1/group/" + this.groupId)
+          await this.axios.delete("/api/v1/group/" + this.groupId)
 
           this.$router.push("/")
         } catch (err) {

@@ -94,7 +94,7 @@ export default {
         this.intervalId = setInterval(() => {
           studyTime++;
           this.studyTime = this.getTimeHM(studyTime);
-        }, 10 * this.members.length)
+        }, 1000 * this.members.length)
       } else {
         clearInterval(this.intervalId)
       }
