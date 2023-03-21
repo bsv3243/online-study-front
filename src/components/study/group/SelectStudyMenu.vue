@@ -61,6 +61,7 @@ export default {
       days: 1,
     },
     //response
+    axiosResult: [],
     studies: [
       {
         studyId: 1,
@@ -74,9 +75,8 @@ export default {
     dataReady: false,
   }),
   async mounted() {
-    const response = await this.studiesGetApiCall();
-
-    this.studies = response.data
+    await this.recordsGetApiCall()
+    this.setStudies()
 
 
     const studies = this.getStudiesFromCookie("studies");
@@ -94,29 +94,43 @@ export default {
     emitData(str, data) {
       this.$emit(str, data);
     },
-    async studiesGetApiCall() {
-      let date = new Date();
-      if(date.getHours()<4) { //하루의 시작은 5시
-        date.setDate(date.getDate()-this.studiesGetRequest.days);
+    setStudies() {
+      this.studies = []
+      const studies = this.axiosResult.data
+
+      console.log(studies)
+
+      for(const study of studies) {
+        const record = study.records[0];
+        const studyDto = {
+          studyId: study.studyId,
+          name: study.studyName,
+          studyTime: record.studyTime
+        }
+        this.studies.push(studyDto);
       }
+    },
+    async recordsGetApiCall() {
+      let date = new Date();
+      if(date.getHours() < 5) {
+        date.setDate(date.getDate()-1);
+      }
+
       try {
-        const response = await this.axios.get("http://localhost:8080/api/v1/studies", {
+        const response = await this.axios.get("/api/v1/records", {
           params: {
-            page: this.studiesGetRequest.page,
-            size: this.studiesGetRequest.size,
-            name: this.studiesGetRequest.name,
-            date: date.toISOString().substring(0, 10),
-            days: this.studiesGetRequest.days
+            startDate: date.toISOString().substring(0, 10),
+            days: 1
           }
         });
 
-        // this.studies = response.data.data
+        this.axiosResult = response.data
 
-
-        return response.data;
       } catch (err) {
-        console.log("잠시 후에 다시 시도해주세요.")
+        alert("잠시 후에 다시 시도해주세요.");
+        console.log(err);
       }
+
     },
     getStudiesFromCookie(str) {
       if(this.$cookies.isKey(str)) {
