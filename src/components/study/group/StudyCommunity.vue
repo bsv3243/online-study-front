@@ -110,7 +110,7 @@ export default {
   methods: {
     async postsGetApiCall() {
       this.postsGetRequest.page = this.page-1
-      const response = await this.axios.get("http://localhost:8080/api/v1/posts", {
+      const response = await this.axios.get("/api/v1/posts", {
         params: {
           page: this.postsGetRequest.page,
           size: this.postsGetRequest.size,

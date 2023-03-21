@@ -62,7 +62,7 @@ export default {
       }
 
       try {
-        const response = await this.axios.post('http://localhost:8080/api/v1/members', this.signupRequest);
+        const response = await this.axios.post('/api/v1/members', this.signupRequest);
         this.$router.push('/');
       } catch (err) {
         console.log(err);

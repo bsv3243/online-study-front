@@ -130,7 +130,7 @@ export default {
       }
 
       try{
-        const response = await this.axios.post("http://localhost:8080/api/v1/groups", this.groupCreateRequest);
+        const response = await this.axios.post("/api/v1/groups", this.groupCreateRequest);
         const groupId = response.data.data;
         this.$router.push("/group/" + groupId);
       } catch (err) {

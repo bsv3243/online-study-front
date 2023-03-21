@@ -122,7 +122,7 @@ export default {
 
     async studyCreateApiCall() {
       try {
-        const response = await this.axios.post("http://localhost:8080/api/v1/studies", this.studyCreateRequest);
+        const response = await this.axios.post("/api/v1/studies", this.studyCreateRequest);
 
         const createdStudyId = response.data.data;
         this.findStudies.push({studyId: createdStudyId, name: this.studyCreateRequest.name})
@@ -134,7 +134,7 @@ export default {
     },
     async studiesGetApiCall() {
       try {
-        const response = await this.axios.get("http://localhost:8080/api/v1/studies", {
+        const response = await this.axios.get("/api/v1/studies", {
           params: {
             page: this.studiesGetRequest.page,
             size: this.studiesGetRequest.size,

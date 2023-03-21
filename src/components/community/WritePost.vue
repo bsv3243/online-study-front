@@ -135,7 +135,7 @@ export default {
         return;
       }
 
-      const response = await this.axios.post("http://localhost:8080/api/v1/posts", this.postCreateRequest);
+      const response = await this.axios.post("/api/v1/posts", this.postCreateRequest);
       const postId = response.data.data;
 
       this.$router.push("/group/" + this.postCreateRequest.groupId + "/post/" + postId);

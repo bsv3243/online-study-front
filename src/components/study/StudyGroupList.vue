@@ -206,7 +206,7 @@ export default {
         this.groupsGetRequest.search = this.search
       }
       const response
-          = await this.axios.get("http://localhost:8080/api/v1/groups", {
+          = await this.axios.get("/api/v1/groups", {
             params: {
               page: this.groupsGetRequest.page,
               size: this.groupsGetRequest.size,

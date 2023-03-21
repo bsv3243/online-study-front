@@ -111,7 +111,7 @@ export default {
         return
       }
       try {
-        const response = await this.axios.get("http://localhost:8080/api/v1/tickets", {
+        const response = await this.axios.get("/api/v1/tickets", {
           params: {
             date: date.toISOString().substring(0, 10),
             days: days

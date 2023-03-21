@@ -45,8 +45,6 @@ export default {
               date.setHours(date.getHours()-9)
               date.setSeconds(v)
 
-              console.log(date)
-
               let hours = date.getHours();
               let minutes = date.getMinutes();
 

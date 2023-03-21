@@ -102,7 +102,7 @@ export default {
         this.studiesGetRequest.name = null
       }
       try {
-        const response = await this.axios.get("http://localhost:8080/api/v1/studies", {
+        const response = await this.axios.get("/api/v1/studies", {
           params: {
             page: this.studiesGetRequest.page,
             size: this.studiesGetRequest.size,

@@ -134,7 +134,7 @@ export default {
   },
   methods: {
     async postGetApiCall() {
-      const response = await this.axios.get("http://localhost:8080/api/v1/post/"+this.postId);
+      const response = await this.axios.get("/api/v1/post/"+this.postId);
       this.post = response.data.data;
 
 
@@ -149,7 +149,7 @@ export default {
       }
       this.commentCreateRequest.postId = this.postId
 
-      await this.axios.post("http://localhost:8080/api/v1/comments", this.commentCreateRequest);
+      await this.axios.post("/api/v1/comments", this.commentCreateRequest);
       this.$router.go(this.$router.currentRoute)
     },
     getCreatedAtToString(createdAt) {

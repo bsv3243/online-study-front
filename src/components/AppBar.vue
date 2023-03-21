@@ -56,7 +56,7 @@ export default {
   methods: {
     async logoutApiCall() {
       try {
-        await this.axios.post("http://localhost:8080/api/v1/logout")
+        await this.axios.post("/api/v1/logout")
 
         this.loginStore.logout()
         this.$router.push("/")
@@ -66,7 +66,7 @@ export default {
     },
     async memberGetApiCall() {
       try {
-        const response = await this.axios.get("http://localhost:8080/api/v1/member");
+        const response = await this.axios.get("/api/v1/member");
         this.memberStore.setMember(response.data.data);
       } catch (err) {
         this.loginStore.logout();

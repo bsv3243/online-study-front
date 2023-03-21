@@ -51,5 +51,12 @@ export default {
         } else {
             return 0;
         }
+    },
+    getDateOfToday() {
+        const date = new Date();
+        if(date.getHours() < 5) {
+            date.setDate(date.getDate()-1);
+        }
+        return date;
     }
 }

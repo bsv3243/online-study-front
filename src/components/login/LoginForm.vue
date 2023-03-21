@@ -82,7 +82,7 @@ export default {
   methods: {
     async loginApiCall() {
       try {
-        await this.axios.post("http://localhost:8080/api/v1/login", this.loginRequest)
+        await this.axios.post("/api/v1/login", this.loginRequest)
 
         this.loginStore.setLogin();
 

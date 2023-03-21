@@ -17,6 +17,7 @@ pinia.use(piniaPluginPersistedstate)
 const app = createApp(App);
 
 axios.defaults.withCredentials = true
+axios.defaults.baseURL = "http://localhost:8080"
 
 app.config.globalProperties.axios = axios;
 app
