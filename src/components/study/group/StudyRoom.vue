@@ -34,6 +34,7 @@
       <v-col>
         <div class="room" v-if="dataReady">
           <StudyMember
+              class="study-member"
               v-for="(member, i) in members"
               :key="i"
               :member="member"/>
@@ -267,7 +268,7 @@ export default {
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
-    justify-content: center;
+    justify-content: space-evenly;
   }
   .roomInfo {
     display: grid;

@@ -33,6 +33,9 @@ export default {
     studyTime: 0,
     intervalId: null,
     attendRate: 0,
+    hour: 0,
+    min: 0,
+    sec: 0,
   }),
   mounted() {
     this.init()
