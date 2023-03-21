@@ -95,6 +95,7 @@ export default {
     img: require('@/assets/img/study_icon.png'),
     memberStudies: [],
     ticketId: null,
+    groupMemberIds: [],
 
     //stomp
     stompClient: null,
@@ -131,7 +132,7 @@ export default {
       const find = this.members.find(member => member.memberId === groupMember.memberId);
       find.groupMember = groupMember;
     }
-
+    this.groupMemberIds = this.group.groupMembers.map(groupMember => groupMember.memberId);
 
     this.dataReady = true
 
@@ -188,7 +189,7 @@ export default {
       }
 
       try{
-        const response = await this.axios.get("http://localhost:8080/api/v1/tickets", {
+        const response = await this.axios.get("/api/v1/tickets", {
           params: {
             groupId: this.ticketsGetRequest.groupId,
             date: this.ticketsGetRequest.date,
@@ -219,7 +220,23 @@ export default {
               const result = JSON.parse(response.body);
               let data = result.data;
 
-              const groupMember = this.group.groupMembers.find(member => member.memberId === data.memberId);
+              let groupMember;
+              if(this.groupMemberIds.includes(data.memberId)) {
+                groupMember = this.group.groupMembers.find(member => member.memberId === data.memberId);
+              } else {
+                this.groupMemberIds.push(data.memberId);
+                groupMember = {
+                  groupMemberId: 0,
+                  memberId: data.memberId,
+                  username: data.nickname,
+                  nickname: data.nickname,
+                  joinedAt: new Date(),
+                  role: "USER"
+                }
+              }
+/*              if(this.group.groupMembers.some(member => member.memberId === data.memberId)) {
+                groupMember = this.group.groupMembers.find(member => member.memberId === data.memberId);
+              }*/
               data.groupMember = groupMember;
 
               const idx = this.members.findIndex(member => member.memberId===data.memberId);

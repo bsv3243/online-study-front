@@ -11,7 +11,7 @@
     </v-card-text>
     <v-card-actions>
       <select-study-menu @study="setStudy" v-if="!hasActiveTicket"/>
-      <v-btn v-if="hasActiveTicket && !isRest" @click="ticketCreateApiCall('REST')">
+      <v-btn v-if="hasActiveTicket && !isRest" @click="studyToRest">
         휴식
       </v-btn>
       <v-btn @click="ticketCreateApiCall('STUDY')" v-if="isRest">다시 시작</v-btn>
@@ -19,7 +19,7 @@
       <v-btn @click="ticketCreateApiCall('STUDY')" v-if="!hasActiveTicket">
         시작
       </v-btn>
-      <v-btn @click="ticketUpdateApiCall" v-if="hasActiveTicket">
+      <v-btn @click="ticketExpireApiCall" v-if="hasActiveTicket">
         중지
       </v-btn>
     </v-card-actions>
@@ -164,6 +164,10 @@ export default {
       }
       this.studyTime = hour + "시간 " + min + "분"
     },
+    async studyToRest() {
+      await this.ticketExpireApiCall();
+      await this.ticketCreateApiCall("REST")
+    },
     async ticketCreateApiCall(status) {
       if(this.selectedStudy instanceof Array) {
         alert("공부가 지정되지 않았습니다.");
@@ -174,12 +178,12 @@ export default {
       this.ticketCreateRequest.status = status
 
       if(this.member.activeTicket !== null) {
-        await this.ticketUpdateApiCall()
+        await this.ticketExpireApiCall()
       }
       this.isRest = status !== "STUDY";
 
       try {
-        const response = await this.axios.post("http://localhost:8080/api/v1/tickets", this.ticketCreateRequest);
+        const response = await this.axios.post("/api/v1/tickets", this.ticketCreateRequest);
 
         this.ticketId = response.data.data;
 
@@ -196,12 +200,12 @@ export default {
         this.$global.printError(err)
       }
     },
-    async ticketUpdateApiCall() {
+    async ticketExpireApiCall() {
       this.ticketUpdateRequest.status = "END"
       clearInterval(this.intervalId)
       try {
         const response = await this.axios
-            .post("http://localhost:8080/api/v1/ticket/" + this.ticketId, this.ticketUpdateRequest);
+            .post("/api/v1/ticket/" + this.ticketId, this.ticketUpdateRequest);
 
         const ticketId = response.data.data;
 
@@ -214,7 +218,7 @@ export default {
     async ticketsGetApiCall() {
 
       try{
-        const response = await this.axios.get("http://localhost:8080/api/v1/tickets", {
+        const response = await this.axios.get("/api/v1/tickets", {
           params: {
             groupId: null,
             date: this.ticketsGetRequest.date,
