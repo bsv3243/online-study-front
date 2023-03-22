@@ -45,14 +45,13 @@
 
 <script>
 import StackedBarChart from "@/components/record/chart/StackedBarChart";
-import FloatingBarChar from "@/components/record/chart/FloatingBarChar";
 import PieChart from "@/components/record/chart/PieChart";
 import {useMemberStore} from "@/store/MemberStore";
 import {useLoginStore} from "@/LoginStore";
 import ScatterChart from "@/components/record/chart/ScatterChart";
 export default {
   name: "RecordList",
-  components: {ScatterChart, PieChart, FloatingBarChar, StackedBarChart},
+  components: {ScatterChart, PieChart, StackedBarChart},
   setup() {
     const memberStore = useMemberStore();
     const loginStore = useLoginStore();
