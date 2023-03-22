@@ -16,7 +16,6 @@ export default {
   name: "StackedBarChart",
   components: { Bar },
   props: {
-    ticketGetRequest: Object,
     studyRecords: Array,
   },
   data: () => ({

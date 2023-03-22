@@ -54,6 +54,11 @@ export default {
   mounted() {
     this.setDataSet()
   },
+  watch: {
+    studyRecords() {
+      this.setDataSet()
+    }
+  },
   methods: {
     setDataSet() {
       const labels = [];

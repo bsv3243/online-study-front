@@ -23,6 +23,7 @@
 
 <script>
 import IconSearch from "@/components/icons/IconSearch";
+import moment from "moment";
 
 export default {
   name: "RecordSearch",
@@ -74,7 +75,7 @@ export default {
         page: 0,
         size: 10,
         name: this.search,
-        date: date.toISOString().substring(0, 10)
+        date: moment(date).format().substring(0, 10)
       }
 
       if(this.search) {
