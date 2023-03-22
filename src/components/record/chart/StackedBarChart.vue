@@ -16,8 +16,8 @@ export default {
   name: "StackedBarChart",
   components: { Bar },
   props: {
-    memberTicket: Object,
     ticketGetRequest: Object,
+    studyRecords: Array,
   },
   data: () => ({
     dataReady: false,
@@ -71,109 +71,56 @@ export default {
     }
   }),
   mounted() {
+    this.setLabels()
     this.setData()
+    this.dataReady = true
+
+    console.log(this.chartData)
   },
   methods: {
     setData() {
-      const date = this.ticketGetRequest.date;
+      console.log(this.studyRecords)
+      const datasets = []
+      this.studyRecords.forEach(studyRecord => {
 
-      //라벨 날짜 별로 지정
-      const labels = [];
-      date.setDate(date.getDate()-1)
-      for(let i=1; i<=this.ticketGetRequest.days; i++) {
-        let month = date.getMonth()+1;
-        let monthDate = date.getDate()+i;
+        const label = studyRecord.studyName
+        const dataset = []
+        studyRecord.records.forEach(record => {
+          dataset.push(record.studyTime)
+        })
 
-        if(month < 10) {
-          month = "0" + month;
-        }
-        if(monthDate < 10) {
-          monthDate = "0" + monthDate;
-        }
+        datasets.push({label:label, data:dataset})
+      })
 
-        labels.push(month + "-" + monthDate)
+      this.chartData.datasets = datasets
+    },
+    setLabels() {
+      let labels = []
+      if(this.studyRecords.length > 0) {
+        const dates = this.studyRecords[0].records.map(record => record.date);
+
+        labels = dates.map(date => date.substring(6));
       }
+      else {
+        const date = new Date();
+        for(let i=6; i>=0; i--) {
+          date.setDate(date.getDate() - i);
+          let month = date.getMonth();
+          let monthDate = date.getDate();
 
-      //스터디별 분류를 위해 스터디를 추출
-      const expiredTickets = this.memberTicket.expiredTickets;
-      const filter = expiredTickets.map(ticket => ticket.study.name);
-      const studiesSet = new Set(filter);
-
-      //ticket 의 스터디 별로 map<날짜, 초>에 삽입
-      const restMap = new Map();
-      this.chartData.datasets = [];
-      for(const studyName of studiesSet) {
-        const map = new Map();
-        for(const ticket of expiredTickets) {
-          if(ticket.study.name === studyName) {
-            const key = this.getKey(new Date(ticket.startTime.substring(0, 19)));
-            const value = this.getOrDefault(map, key);
-
-            if(ticket.status === "STUDY") {
-              map.set(key, value + ticket.activeTime);
-            } else if(ticket.status === "REST") {
-              restMap.set(key, value + ticket.activeTime);
-            }
+          if (month < 10) {
+            month = "0" + month;
           }
-        }
+          if (monthDate < 10) {
+            monthDate = "0" + monthDate;
+          }
 
-        //날짜 순으로 data 를 생성
-        const data = []
-        for(const label of labels) {
-          const value = this.getOrDefault(map, label);
-          data.push(value);
+          labels.push(month + "-" + monthDate)
         }
-
-        const dataset = {
-          label: studyName,
-          data: data,
-          backgroundColor: "#e8e8e8"
-        }
-
-        //datasets 에 data 를 삽입
-        this.chartData.datasets.push(dataset);
       }
 
       this.chartData.labels = labels
-
-      if(studiesSet.size === 0) {
-        let array = [];
-        array.fill(0, 0, this.ticketGetRequest.days)
-        const dataset = {
-          label: "데이터 없음",
-          data: array,
-          backgroundColor: "#e8e8e8"
-        }
-
-        this.chartData.datasets = [dataset]
-      }
-
-
-      this.dataReady = true;
     },
-    getOrDefault(map, key) {
-      if(map.has(key)) {
-        return map.get(key);
-      } else {
-        return 0;
-      }
-    },
-    getKey(date) {
-      if(date.getHours() < 4) {
-        date.setDate(date.getDate()-1)
-      }
-      let month = date.getMonth()+1;
-      let monthDate = date.getDate();
-
-      if(month < 10) {
-        month = "0" + month;
-      }
-      if(monthDate < 10) {
-        monthDate = "0" + monthDate;
-      }
-
-      return month + "-" + monthDate
-    }
   }
 }
 </script>

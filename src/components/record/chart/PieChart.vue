@@ -16,7 +16,7 @@ export default {
   name: "PieChart",
   components: { Pie },
   props: {
-    memberTicket: Object
+    studyRecords: Array
   },
   data: () => ({
     dataReady: false,
@@ -56,39 +56,27 @@ export default {
   },
   methods: {
     setDataSet() {
-      const expiredTickets = this.memberTicket.expiredTickets;
-
-      const map = new Map();
-
-      let restTime = 0;
-      for(const ticket of expiredTickets) {
-        let studyTime = this.getOrDefault(map, ticket.study.name);
-        if(ticket.status === "STUDY") {
-          studyTime += ticket.activeTime;
-        } else if(ticket.status === "REST") {
-          restTime += ticket.activeTime;
-        }
-        map.set(ticket.study.name, studyTime);
-      }
-
-      const label = [];
+      const labels = [];
       const data = [];
-      for(const key of map.keys()) {
-        label.push(key);
-        data.push(map.get(key));
-      }
-      label.push("휴식")
-      data.push(restTime)
+      this.studyRecords.forEach(studyRecord => {
+        let studyTime = this.getStudyTime(studyRecord);
+        labels.push(studyRecord.studyName);
+        data.push(studyTime);
+      })
 
-      console.log(label, data)
-
-      this.chartData.labels = label;
-      this.chartData.datasets[0].data = data;
+      this.chartData.labels = labels
+      this.chartData.datasets[0].data = data
 
       this.dataReady = true;
 
-      console.log(this.chartData.labels)
-      console.log(this.chartData.datasets[0].data)
+      console.log(this.chartData)
+    },
+    getStudyTime(studyRecord) {
+      let studyTime = 0;
+      studyRecord.records.forEach(record => {
+        studyTime += record.studyTime;
+      })
+      return studyTime;
     },
     getLabels() {
 

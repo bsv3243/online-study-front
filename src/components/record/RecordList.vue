@@ -6,7 +6,10 @@
           <v-card class="pa-3">
               총 공부시간 합산 차트
             <v-card-text>
-              <PieChart :member-ticket="memberTicket" v-if="dataReady"/>
+              <PieChart :study-records="studyRecords" v-if="dataReady && isRecordExist"/>
+              <div class="d-flex justify-center align-center h-100">
+                <p v-if="!isRecordExist">데이터 없음</p>
+              </div>
             </v-card-text>
           </v-card>
         </v-col>
@@ -16,7 +19,10 @@
           <v-card class="pa-3" min-height="35vh">
             공부시간 차트
             <div style="height: 30vh">
-              <StackedBarChart :member-ticket="memberTicket" :ticketGetRequest="ticketGetRequest" v-if="dataReady"/>
+              <StackedBarChart :study-records="studyRecords" :ticketGetRequest="ticketGetRequest" v-if="dataReady && isRecordExist"/>
+              <div class="d-flex justify-center align-center h-100">
+                <p v-if="!isRecordExist">데이터 없음</p>
+              </div>
             </div>
           </v-card>
         </v-col>
@@ -24,7 +30,11 @@
           <v-card class="pa-3" min-height="35vh">
             공부 시작 종료 시간 차트
             <div style="height: 30vh">
-            <FloatingBarChar :member-ticket="memberTicket" :request="ticketGetRequest" v-if="dataReady"/>
+<!--            <FloatingBarChar :member-ticket="memberTicket" :study-records="studyRecords" :request="ticketGetRequest" v-if="dataReady"/>-->
+              <scatter-chart :study-records="studyRecords" v-if="dataReady && isRecordExist"/>
+              <div class="d-flex justify-center align-center h-100">
+                <p v-if="!isRecordExist">데이터 없음</p>
+              </div>
             </div>
           </v-card>
         </v-col>
@@ -39,9 +49,10 @@ import FloatingBarChar from "@/components/record/chart/FloatingBarChar";
 import PieChart from "@/components/record/chart/PieChart";
 import {useMemberStore} from "@/store/MemberStore";
 import {useLoginStore} from "@/LoginStore";
+import ScatterChart from "@/components/record/chart/ScatterChart";
 export default {
   name: "RecordList",
-  components: {PieChart, FloatingBarChar, StackedBarChart},
+  components: {ScatterChart, PieChart, FloatingBarChar, StackedBarChart},
   setup() {
     const memberStore = useMemberStore();
     const loginStore = useLoginStore();
@@ -50,8 +61,17 @@ export default {
   },
   async mounted() {
     await this.ticketGetApiCall(7)
+    await this.recordGetApiCall()
+
+    if(this.studyRecords.length === 0) {
+      this.isRecordExist = false;
+    }
+
+    this.dataReady = true;
   },
   data:() => ({
+
+    isRecordExist: true,
     //axios
     //request
     ticketGetRequest: {
@@ -89,6 +109,7 @@ export default {
         name: "study"
       }
     },
+    studyRecords: [],
     //complete
     dataReady: false,
   }),
@@ -124,10 +145,26 @@ export default {
           this.memberTicket = data[0]
         }
 
-        this.dataReady = true;
+        // this.dataReady = true;
       } catch (err) {
         alert("잠시 후에 다시 시도해주세요.")
         console.log(err)
+      }
+    },
+    async recordGetApiCall() {
+      let params = {
+        memberId: this.memberStore.getMemberId
+      }
+
+      try {
+        const response = await this.axios.get("/api/v1/records", {
+          params: params
+        });
+
+        this.studyRecords = response.data.data
+      } catch (err) {
+        alert("잠시 후에 다시 시도해주세요.");
+        console.log(err);
       }
     }
   },
