@@ -52,9 +52,23 @@ export default {
   name: "RecordList",
   components: {ScatterChart, PieChart, StackedBarChart},
   props: {
-    times: Object
+    times: Object,
+    selectedStudy: Object
   },
   watch: {
+      async selectedStudy() {
+        if(this.selectedStudy) {
+          this.recordGetRequest.studyId = this.selectedStudy.studyId
+        } else {
+          this.recordGetRequest.studyId = null;
+        }
+
+        await this.recordGetApiCall()
+
+        this.isRecordExist = this.studyRecords.length !== 0;
+
+        this.chartKey++;
+      },
     async times() {
       console.log(this.times)
 
@@ -72,6 +86,7 @@ export default {
 
       this.chartKey++;
     }
+
   },
   setup() {
     const memberStore = useMemberStore();
@@ -83,9 +98,7 @@ export default {
     this.recordGetRequest.memberId = this.loginStore.getMemberId
     await this.recordGetApiCall()
 
-    if(this.studyRecords.length === 0) {
-      this.isRecordExist = false;
-    }
+    this.isRecordExist = this.studyRecords.length !== 0;
 
     this.dataReady = true;
   },

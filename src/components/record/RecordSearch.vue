@@ -58,7 +58,7 @@ export default {
   }),
   watch: {
     select() {
-      console.log(this.select)
+      this.$emit("selectedStudy", this.studies[this.select]);
     }
   },
   mounted() {

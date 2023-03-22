@@ -4,14 +4,14 @@
       <v-container>
         <v-row>
           <div class="left">
-            <RecordSearch/>
+            <RecordSearch @selectedStudy="changeSelectedStudy"/>
           </div>
           <v-col>
             <v-sheet min-height="90vh">
               <div class="date-picker-container">
-                <record-select-date @time="print"/>
+                <record-select-date @time="changeTimeCondition"/>
               </div>
-              <RecordList :times="times"/>
+              <RecordList :times="times" :selected-study="selectedStudy"/>
             </v-sheet>
           </v-col>
         </v-row>
@@ -31,11 +31,15 @@ export default {
     times: {
       startTime: null,
       endTime: null
-    }
+    },
+    selectedStudy: null,
   }),
   methods: {
-    print(value) {
+    changeTimeCondition(value) {
       this.times = value
+    },
+    changeSelectedStudy(value) {
+      this.selectedStudy = value
     }
   }
 }
