@@ -16,8 +16,8 @@ export default {
   name: "StackedBarChart",
   components: { Bar },
   props: {
-    memberTicket: Object,
-    ticketGetRequest: Object,
+    studyRecords: Array,
+    studyRecordsOthers: Array,
   },
   data: () => ({
     dataReady: false,
@@ -59,11 +59,12 @@ export default {
             label: (tooltipItem) => {
               const index = tooltipItem.dataIndex;
               const data = tooltipItem.dataset.data[index];
+              const label = tooltipItem.dataset.label;
               const date = new Date(data * 1000);
 
               const hours = date.getHours() - 9;
               const minutes = date.getMinutes();
-              return hours + "시간 " + minutes + "분";
+              return label + " " + hours + "시간 " + minutes + "분";
             }
           }
         }
@@ -71,109 +72,74 @@ export default {
     }
   }),
   mounted() {
+    this.setLabels()
     this.setData()
+    
+    if(this.studyRecordsOthers) {
+      this.setDataOthers()
+    }
+
+    this.dataReady = true
+
   },
   methods: {
     setData() {
-      const date = this.ticketGetRequest.date;
+      const datasets = []
+      this.studyRecords.forEach(studyRecord => {
 
-      //라벨 날짜 별로 지정
-      const labels = [];
-      date.setDate(date.getDate()-1)
-      for(let i=1; i<=this.ticketGetRequest.days; i++) {
-        let month = date.getMonth()+1;
-        let monthDate = date.getDate()+i;
+        const label = studyRecord.studyName ? studyRecord.studyName : "휴식"
+        const dataset = []
+        studyRecord.records.forEach(record => {
+          dataset.push(record.studyTime)
+        })
 
-        if(month < 10) {
-          month = "0" + month;
-        }
-        if(monthDate < 10) {
-          monthDate = "0" + monthDate;
-        }
+        datasets.push({label:label, data:dataset})
+      })
 
-        labels.push(month + "-" + monthDate)
-      }
+      this.chartData.datasets = datasets
+    },
+    setDataOthers() {
+      this.studyRecordsOthers.forEach(studyRecord => {
 
-      //스터디별 분류를 위해 스터디를 추출
-      const expiredTickets = this.memberTicket.expiredTickets;
-      const filter = expiredTickets.map(ticket => ticket.study.name);
-      const studiesSet = new Set(filter);
-
-      //ticket 의 스터디 별로 map<날짜, 초>에 삽입
-      const restMap = new Map();
-      this.chartData.datasets = [];
-      for(const studyName of studiesSet) {
-        const map = new Map();
-        for(const ticket of expiredTickets) {
-          if(ticket.study.name === studyName) {
-            const key = this.getKey(new Date(ticket.startTime.substring(0, 19)));
-            const value = this.getOrDefault(map, key);
-
-            if(ticket.status === "STUDY") {
-              map.set(key, value + ticket.activeTime);
-            } else if(ticket.status === "REST") {
-              restMap.set(key, value + ticket.activeTime);
-            }
-          }
-        }
-
-        //날짜 순으로 data 를 생성
+        const label = studyRecord.studyName + " 평균";
         const data = []
-        for(const label of labels) {
-          const value = this.getOrDefault(map, label);
-          data.push(value);
-        }
+        studyRecord.records.forEach(record => {
+          data.push(record.studyTime/record.memberCount)
+        })
 
-        const dataset = {
-          label: studyName,
-          data: data,
-          backgroundColor: "#e8e8e8"
-        }
+        const dataset = {label:label, data:data, type: 'line', order: 0};
+        this.chartData.datasets.push(dataset)
+      })
 
-        //datasets 에 data 를 삽입
-        this.chartData.datasets.push(dataset);
+
+    },
+    setLabels() {
+      let labels = []
+      if(this.studyRecords.length > 0) {
+        const dates = this.studyRecords[0].records.map(record => record.date);
+
+        labels = dates.map(date => date.substring(6));
+      }
+      else {
+        const date = new Date();
+        for(let i=6; i>=0; i--) {
+          date.setDate(date.getDate() - i);
+          let month = date.getMonth();
+          let monthDate = date.getDate();
+
+          if (month < 10) {
+            month = "0" + month;
+          }
+          if (monthDate < 10) {
+            monthDate = "0" + monthDate;
+          }
+
+          labels.push(month + "-" + monthDate)
+        }
       }
 
       this.chartData.labels = labels
-
-      if(studiesSet.size === 0) {
-        let array = [];
-        array.fill(0, 0, this.ticketGetRequest.days)
-        const dataset = {
-          label: "데이터 없음",
-          data: array,
-          backgroundColor: "#e8e8e8"
-        }
-
-        this.chartData.datasets = [dataset]
-      }
-
-
-      this.dataReady = true;
     },
-    getOrDefault(map, key) {
-      if(map.has(key)) {
-        return map.get(key);
-      } else {
-        return 0;
-      }
-    },
-    getKey(date) {
-      if(date.getHours() < 4) {
-        date.setDate(date.getDate()-1)
-      }
-      let month = date.getMonth()+1;
-      let monthDate = date.getDate();
-
-      if(month < 10) {
-        month = "0" + month;
-      }
-      if(monthDate < 10) {
-        monthDate = "0" + monthDate;
-      }
-
-      return month + "-" + monthDate
-    }
   }
 }
 </script>

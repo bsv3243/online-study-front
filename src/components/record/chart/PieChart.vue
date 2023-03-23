@@ -16,7 +16,7 @@ export default {
   name: "PieChart",
   components: { Pie },
   props: {
-    memberTicket: Object
+    studyRecords: Array
   },
   data: () => ({
     dataReady: false,
@@ -39,11 +39,12 @@ export default {
             label: (tooltipItem) => {
               const index = tooltipItem.dataIndex;
               const data = tooltipItem.dataset.data[index];
-              // const label = tooltipItem.label;
-              const date = new Date(data * 1000);
 
-              const hours = date.getHours() - 9;
-              const minutes = date.getMinutes();
+              const hours = Math.floor(data/3600);
+              const minutes = Math.floor(data/60)%60;
+
+              console.log(data)
+
               return hours + "시간 " + minutes + "분";
             }
           }
@@ -54,51 +55,34 @@ export default {
   mounted() {
     this.setDataSet()
   },
+  watch: {
+    studyRecords() {
+      this.setDataSet()
+    }
+  },
   methods: {
     setDataSet() {
-      const expiredTickets = this.memberTicket.expiredTickets;
-
-      const map = new Map();
-
-      let restTime = 0;
-      for(const ticket of expiredTickets) {
-        let studyTime = this.getOrDefault(map, ticket.study.name);
-        if(ticket.status === "STUDY") {
-          studyTime += ticket.activeTime;
-        } else if(ticket.status === "REST") {
-          restTime += ticket.activeTime;
-        }
-        map.set(ticket.study.name, studyTime);
-      }
-
-      const label = [];
+      const labels = [];
       const data = [];
-      for(const key of map.keys()) {
-        label.push(key);
-        data.push(map.get(key));
-      }
-      label.push("휴식")
-      data.push(restTime)
+      this.studyRecords.forEach(studyRecord => {
+        let studyTime = this.getStudyTime(studyRecord);
+        labels.push(studyRecord.studyName ? studyRecord.studyName : "휴식");
+        data.push(studyTime);
+      })
 
-      console.log(label, data)
-
-      this.chartData.labels = label;
-      this.chartData.datasets[0].data = data;
+      this.chartData.labels = labels
+      this.chartData.datasets[0].data = data
 
       this.dataReady = true;
 
-      console.log(this.chartData.labels)
-      console.log(this.chartData.datasets[0].data)
+      console.log(this.chartData)
     },
-    getLabels() {
-
-    },
-    getOrDefault(map, key) {
-      if(map.has(key)) {
-        return map.get(key);
-      } else {
-        return 0;
-      }
+    getStudyTime(studyRecord) {
+      let studyTime = 0;
+      studyRecord.records.forEach(record => {
+        studyTime += record.studyTime;
+      })
+      return studyTime;
     }
   }
 

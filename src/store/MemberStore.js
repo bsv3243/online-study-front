@@ -7,11 +7,15 @@ export const useMemberStore = defineStore('member', {
     getters: {
         getMemberId() {
             return this.member.memberId;
+        },
+        getMember() {
+            return this.member;
         }
     },
     actions: {
         setMember(member) {
             this.member = member;
         }
-    }
+    },
+    persist: true
 })
