@@ -18,7 +18,9 @@
           <v-card class="pa-3" min-height="35vh">
             공부시간 차트
             <div style="height: 30vh">
-              <StackedBarChart :study-records="studyRecords" v-if="dataReady && isRecordExist" :key="chartKey"/>
+              <StackedBarChart :study-records="studyRecords"
+                               :study-records-others="studyRecordsOthers"
+                               v-if="dataReady && isRecordExist" :key="chartKey"/>
               <div class="d-flex justify-center align-center h-100">
                 <p v-if="!isRecordExist">데이터 없음</p>
               </div>
@@ -63,24 +65,32 @@ export default {
           this.recordGetRequest.studyId = null;
         }
 
-        await this.recordGetApiCall()
+        this.recordGetRequest.memberId = this.memberStore.getMemberId;
+        this.studyRecords = await this.recordGetApiCall()
+
+        console.log(this.studyRecords)
+        
+        if(this.selectedStudy) { // 특정 스터디가 선택되었을 때 다른 사용자들의 기록을 요청한다.
+          this.recordGetRequest.memberId = null;
+          this.studyRecordsOthers = await this.recordGetApiCall()
+        } else {
+          this.studyRecordsOthers = null;
+        }
 
         this.isRecordExist = this.studyRecords.length !== 0;
 
         this.chartKey++;
       },
     async times() {
-      console.log(this.times)
 
-      this.recordGetRequest.memberId = this.loginStore.getMemberId
+      this.recordGetRequest.memberId = this.memberStore.getMemberId
       this.recordGetRequest.startDate = moment(this.times.startTime).format().substring(0, 10);
 
-      console.log(this.recordGetRequest)
 
       let millis = this.times.endTime.getTime() - this.times.startTime.getTime();
       this.recordGetRequest.days = millis / (1000 * 3600 * 24) + 1;
 
-      await this.recordGetApiCall()
+      this.studyRecords = await this.recordGetApiCall()
 
       this.isRecordExist = this.studyRecords.length !== 0;
 
@@ -95,8 +105,9 @@ export default {
     return {memberStore, loginStore};
   },
   async mounted() {
-    this.recordGetRequest.memberId = this.loginStore.getMemberId
-    await this.recordGetApiCall()
+    this.recordGetRequest.memberId = this.memberStore.getMemberId
+    console.log(this.recordGetRequest)
+    this.studyRecords = await this.recordGetApiCall()
 
     this.isRecordExist = this.studyRecords.length !== 0;
 
@@ -116,6 +127,7 @@ export default {
     },
     //response
     studyRecords: [],
+    studyRecordsOthers: [],
     //complete
     dataReady: false,
   }),
@@ -126,9 +138,7 @@ export default {
           params: this.recordGetRequest
         });
 
-        this.studyRecords = response.data.data
-
-        console.log(this.studyRecords)
+        return response.data.data
       } catch (err) {
         alert("잠시 후에 다시 시도해주세요.");
         console.log(err);

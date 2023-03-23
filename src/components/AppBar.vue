@@ -34,9 +34,9 @@ export default {
 
     return {loginStore, memberStore};
   },
-  mounted() {
+  async mounted() {
     if(this.loginStore.isLogin) {
-      this.memberGetApiCall()
+      await this.memberGetApiCall()
     }
   },
   data: () => ({

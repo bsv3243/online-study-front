@@ -17,6 +17,7 @@ export default {
   components: { Bar },
   props: {
     studyRecords: Array,
+    studyRecordsOthers: Array,
   },
   data: () => ({
     dataReady: false,
@@ -72,13 +73,16 @@ export default {
   mounted() {
     this.setLabels()
     this.setData()
+    
+    if(this.studyRecordsOthers) {
+      this.setDataOthers()
+    }
+
     this.dataReady = true
 
-    console.log(this.chartData)
   },
   methods: {
     setData() {
-      console.log(this.studyRecords)
       const datasets = []
       this.studyRecords.forEach(studyRecord => {
 
@@ -92,6 +96,21 @@ export default {
       })
 
       this.chartData.datasets = datasets
+    },
+    setDataOthers() {
+      this.studyRecordsOthers.forEach(studyRecord => {
+
+        const label = studyRecord.studyName + " 평균";
+        const data = []
+        studyRecord.records.forEach(record => {
+          data.push(record.studyTime/record.memberCount)
+        })
+
+        const dataset = {label:label, data:data, type: 'line', order: 0};
+        this.chartData.datasets.push(dataset)
+      })
+
+
     },
     setLabels() {
       let labels = []
