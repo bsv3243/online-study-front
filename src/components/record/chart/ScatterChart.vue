@@ -111,12 +111,12 @@ export default {
 
       const startTimeArr = [];
       const endTimeArr = [];
-      for(let i=0; i<length; i++) {
+      for(let i=0; i<length; i++) { // length 는 날짜 길이를 뜻한다. 즉, 날짜 길이만큼 루프를 돈다.
         let startTimeMin;
         let endTimeMax;
         let recordDate;
 
-        this.studyRecords.forEach(studyRecord => {
+        this.studyRecords.forEach(studyRecord => { // 해당 날짜의 학습 기록들을 대상으로 계산한다.
           recordDate = studyRecord.records[i].date;
 
           if(studyRecord.records[i].studyTime !== 0) { //해당 일자 공부 기록이 존재하면
@@ -126,27 +126,32 @@ export default {
             startTimeMin = this.compareAndChangeMinTime(startTimeMin, startTime);
             endTimeMax = this.compareAndChangeMaxTime(endTimeMax, endTime);
 
-          } else {
-            const point = {
-              x: new Date(recordDate).getTime(),
-              y: null
-            }
-
-            startTimeArr.push(point);
-            endTimeArr.push(point);
           }
         })
 
-        startTimeMin = this.setDateForChart(startTimeMin);
-        endTimeMax = this.setDateForChart(endTimeMax);
+        let startTimePoint;
+        let endTimePoint;
 
-        const startTimePoint = {
-          x : new Date(recordDate).getTime(),
-          y : startTimeMin.getTime()
-        }
-        const endTimePoint = {
-          x : new Date(recordDate).getTime(),
-          y : endTimeMax.getTime()
+        if(startTimeMin) {
+          startTimeMin = this.setDateForChart(startTimeMin);
+          endTimeMax = this.setDateForChart(endTimeMax);
+
+          startTimePoint = {
+            x: new Date(recordDate).getTime(),
+            y: startTimeMin.getTime()
+          }
+          endTimePoint = {
+            x: new Date(recordDate).getTime(),
+            y: endTimeMax.getTime()
+          }
+        } else { 
+          const point = {
+            x: new Date(recordDate).getTime(),
+            y: null
+          }
+
+          startTimePoint = point;
+          endTimePoint = point;
         }
 
         startTimeArr.push(startTimePoint)
