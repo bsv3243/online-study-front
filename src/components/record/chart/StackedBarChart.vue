@@ -59,11 +59,12 @@ export default {
             label: (tooltipItem) => {
               const index = tooltipItem.dataIndex;
               const data = tooltipItem.dataset.data[index];
+              const label = tooltipItem.dataset.label;
               const date = new Date(data * 1000);
 
               const hours = date.getHours() - 9;
               const minutes = date.getMinutes();
-              return hours + "시간 " + minutes + "분";
+              return label + " " + hours + "시간 " + minutes + "분";
             }
           }
         }
@@ -86,7 +87,7 @@ export default {
       const datasets = []
       this.studyRecords.forEach(studyRecord => {
 
-        const label = studyRecord.studyName
+        const label = studyRecord.studyName ? studyRecord.studyName : "휴식"
         const dataset = []
         studyRecord.records.forEach(record => {
           dataset.push(record.studyTime)
