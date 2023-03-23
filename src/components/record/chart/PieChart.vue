@@ -41,7 +41,7 @@ export default {
               const data = tooltipItem.dataset.data[index];
 
               const hours = Math.floor(data/3600);
-              const minutes = data/60%60;
+              const minutes = Math.floor(data/60)%60;
 
               console.log(data)
 
@@ -66,7 +66,7 @@ export default {
       const data = [];
       this.studyRecords.forEach(studyRecord => {
         let studyTime = this.getStudyTime(studyRecord);
-        labels.push(studyRecord.studyName);
+        labels.push(studyRecord.studyName ? studyRecord.studyName : "휴식");
         data.push(studyTime);
       })
 
@@ -83,16 +83,6 @@ export default {
         studyTime += record.studyTime;
       })
       return studyTime;
-    },
-    getLabels() {
-
-    },
-    getOrDefault(map, key) {
-      if(map.has(key)) {
-        return map.get(key);
-      } else {
-        return 0;
-      }
     }
   }
 

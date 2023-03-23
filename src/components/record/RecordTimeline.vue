@@ -79,6 +79,7 @@ export default {
     }
   },
   async mounted() {
+    this.date = new Date()
     this.initTicketRequest()
 
     this.memberTickets = await this.ticketGetApiCall()
@@ -91,6 +92,8 @@ export default {
 
       if(this.date) {
         this.ticketGetRequest.date = this.date.toISOString().substring(0, 10);
+      } else {
+        this.ticketGetRequest.date = new Date().toISOString().substring(0, 10);
       }
 
       if(this.selectedStudy) {
@@ -122,11 +125,13 @@ export default {
 
       this.expiredTickets = this.memberTickets[0].expiredTickets
 
+      console.log(this.expiredTickets)
+
       this.expiredTickets.forEach(expiredTicket => {
         this.ticketDto = {
           startTime: expiredTicket.startTime.substring(11, 16),
           endTime: expiredTicket.endTime.substring(11, 16),
-          studyName: expiredTicket.study.name,
+          studyName: expiredTicket.study ? expiredTicket.study.name : "휴식",
           status: expiredTicket.status,
         }
 

@@ -114,35 +114,18 @@ export default {
       for(let i=0; i<length; i++) {
         let startTimeMin;
         let endTimeMax;
+        let recordDate;
 
         this.studyRecords.forEach(studyRecord => {
-
-          const recordDate = studyRecord.records[i].date;
+          recordDate = studyRecord.records[i].date;
 
           if(studyRecord.records[i].studyTime !== 0) { //해당 일자 공부 기록이 존재하면
-            const startTimeISOStr = studyRecord.records[i].startTime;
-            const endTimeISOStr = studyRecord.records[i].endTime;
-
-            let startTime = new Date(startTimeISOStr);
-            let endTime = new Date(endTimeISOStr);
+            let startTime = this.initDateFromISOString(studyRecord.records[i].startTime);
+            let endTime = this.initDateFromISOString(studyRecord.records[i].endTime);
 
             startTimeMin = this.compareAndChangeMinTime(startTimeMin, startTime);
             endTimeMax = this.compareAndChangeMaxTime(endTimeMax, endTime);
 
-            startTimeMin = this.setDateForChart(startTimeMin);
-            endTimeMax = this.setDateForChart(endTimeMax);
-
-            const startTimePoint = {
-              x : new Date(recordDate).getTime(),
-              y : startTimeMin.getTime()
-            }
-            const endTimePoint = {
-              x : new Date(recordDate).getTime(),
-              y : endTimeMax.getTime()
-            }
-
-            startTimeArr.push(startTimePoint)
-            endTimeArr.push(endTimePoint)
           } else {
             const point = {
               x: new Date(recordDate).getTime(),
@@ -153,6 +136,21 @@ export default {
             endTimeArr.push(point);
           }
         })
+
+        startTimeMin = this.setDateForChart(startTimeMin);
+        endTimeMax = this.setDateForChart(endTimeMax);
+
+        const startTimePoint = {
+          x : new Date(recordDate).getTime(),
+          y : startTimeMin.getTime()
+        }
+        const endTimePoint = {
+          x : new Date(recordDate).getTime(),
+          y : endTimeMax.getTime()
+        }
+
+        startTimeArr.push(startTimePoint)
+        endTimeArr.push(endTimePoint)
       }
 
       const startTimeData = {
@@ -165,6 +163,9 @@ export default {
       };
 
       this.chartData.datasets = [startTimeData, endTimeData]
+    },
+    initDateFromISOString(time) {
+      return new Date(time);
     },
     compareAndChangeMinTime(source, target) {
       if(!source) {
