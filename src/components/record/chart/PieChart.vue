@@ -39,11 +39,12 @@ export default {
             label: (tooltipItem) => {
               const index = tooltipItem.dataIndex;
               const data = tooltipItem.dataset.data[index];
-              // const label = tooltipItem.label;
-              const date = new Date(data * 1000);
 
-              const hours = date.getHours() - 9;
-              const minutes = date.getMinutes();
+              const hours = Math.floor(data/3600);
+              const minutes = data/60%60;
+
+              console.log(data)
+
               return hours + "시간 " + minutes + "분";
             }
           }
