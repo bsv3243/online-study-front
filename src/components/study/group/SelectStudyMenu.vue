@@ -40,6 +40,7 @@
 
 <script>
 import AddStudyDialog from "@/components/study/group/AddStudyDialog";
+import moment from "moment";
 
 export default {
   name: "SelectStudyMenu",
@@ -119,7 +120,7 @@ export default {
       try {
         const response = await this.axios.get("/api/v1/records", {
           params: {
-            startDate: date.toISOString().substring(0, 10),
+            startDate: moment(date).format().substring(0, 10),
             days: 1
           }
         });

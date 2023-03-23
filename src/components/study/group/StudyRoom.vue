@@ -51,6 +51,7 @@ import SockJS from "sockjs-client"
 import StudyMember from "@/components/study/group/StudyMember";
 import MemberTicketInfo from "@/components/study/group/MemberTicketInfo";
 import StudyGroupStudyInfo from "@/components/study/group/StudyGroupStudyInfo";
+import moment from "moment";
 export default {
   name: "StudyRoom",
   components: {StudyGroupStudyInfo, MemberTicketInfo, StudyMember},
@@ -105,7 +106,7 @@ export default {
     //request
     ticketsGetRequest: {
       groupId: null,
-      date: new Date().toISOString().substring(0, 10),
+      date: moment(new Date()).format().substring(0, 10),
       days: 1
     },
     //response

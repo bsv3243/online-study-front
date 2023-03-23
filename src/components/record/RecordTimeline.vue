@@ -73,8 +73,6 @@ export default {
 
       this.memberTickets = await this.ticketGetApiCall()
 
-      console.log(this.memberTickets);
-
       this.setData()
     }
   },
@@ -90,21 +88,14 @@ export default {
     initTicketRequest() {
       this.ticketGetRequest.memberId = this.memberStore.getMemberId;
 
-      if(this.date) {
-        this.ticketGetRequest.date = this.date.toISOString().substring(0, 10);
+      if (this.date) {
+        this.ticketGetRequest.date = moment(this.date).format().substring(0, 10);
       } else {
-        this.ticketGetRequest.date = new Date().toISOString().substring(0, 10);
+        this.ticketGetRequest.date = moment(new Date()).format().substring(0, 10);
       }
 
-      if(this.selectedStudy) {
+      if (this.selectedStudy) {
         this.ticketGetRequest.studyId = this.selectedStudy.studyId;
-      }
-
-      if(this.times.startTime) {
-        this.ticketGetRequest.startDate = moment(this.times.startTime).format().substring(0, 10);
-
-        let millis = this.times.endTime.getTime() - this.times.startTime.getTime();
-        this.ticketGetRequest.days = millis / (1000 * 3600 * 24) + 1;
       }
     },
     async ticketGetApiCall() {
@@ -124,8 +115,6 @@ export default {
       this.ticketDtos = []
 
       this.expiredTickets = this.memberTickets[0].expiredTickets
-
-      console.log(this.expiredTickets)
 
       this.expiredTickets.forEach(expiredTicket => {
         this.ticketDto = {

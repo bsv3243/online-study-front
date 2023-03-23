@@ -28,6 +28,7 @@
 
 <script>
 import SelectStudyMenu from "@/components/study/group/SelectStudyMenu";
+import moment from "moment";
 
 export default {
   name: "MemberTicketInfo",
@@ -57,7 +58,7 @@ export default {
     },
     ticketsGetRequest: {
       groupId: null,
-      date: new Date().toISOString().substring(0, 10),
+      date: moment(new Date()).format().substring(0, 10),
       days: 1
     },
     ticketId: null,
