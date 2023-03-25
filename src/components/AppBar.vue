@@ -12,6 +12,9 @@
           <v-btn>
             <router-link to="/record" style="text-decoration: none; color: inherit">공부기록</router-link>
           </v-btn>
+          <v-btn>
+            <router-link to="/community" style="text-decoration: none; color: inherit">커뮤니티</router-link>
+          </v-btn>
         </div>
         <v-spacer></v-spacer>
         <LoginForm v-if="!loginStore.isLogin"/>
