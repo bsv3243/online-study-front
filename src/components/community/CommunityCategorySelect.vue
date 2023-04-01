@@ -16,8 +16,15 @@
 </template>
 
 <script>
+import {useCommunityStore} from "@/store/CommunityStore";
+
 export default {
   name: "CommunityCategorySelect",
+  setup() {
+    const communityStore = useCommunityStore();
+
+    return {communityStore}
+  },
   data:() => ({
     postCategories: [
       {
@@ -35,11 +42,24 @@ export default {
     ],
     selectedCategory: {}
   }),
+  mounted() {
+    this.selectedCategory.value = this.communityStore.getCategory
+    this.selectedCategory.name = this.getCategoryName(this.selectedCategory.value);
+  },
   methods: {
     selectCategory(category) {
       this.selectedCategory = category;
 
+      this.communityStore.updateCategory(category);
+
       this.$emit("selectedCategory", category);
+    },
+    getCategoryName(value) {
+      for(const category of this.postCategories) {
+        if(category.value === value) {
+          return category.name;
+        }
+      }
     }
   }
 }

@@ -4,7 +4,7 @@
       <v-container>
         <v-row>
           <div class="left">
-              <community-category-select @selected-category="selectCategory"/>
+              <community-category-select/>
           </div>
           <v-col>
             <community-post-list v-if="!selectedCategory"/>
@@ -21,20 +21,27 @@
 import CommunityPostList from "@/components/community/CommunityPostList";
 import CommunityCategorySelect from "@/components/community/CommunityCategorySelect";
 import CommunityPostListByCategory from "@/components/community/CommunityPostListByCategory";
+import {useCommunityStore} from "@/store/CommunityStore";
+import {watch} from "vue";
 export default {
   name: "AppCommunity",
   components: {CommunityPostListByCategory, CommunityCategorySelect, CommunityPostList},
+  setup() {
+    const communityStore = useCommunityStore();
+
+    return {communityStore}
+  },
   data: () => ({
     selectedCategory: null
   }),
   mounted() {
-    this.selectedCategory = null
+    this.selectedCategory = this.communityStore.getCategory
+    watch(() => this.communityStore.category, () => {
+      this.selectedCategory = this.communityStore.getCategory
+      console.log(this.selectedCategory)
+    })
   },
   methods: {
-    selectCategory(value) {
-      this.selectedCategory = value
-      console.log(this.selectedCategory)
-    }
   }
 }
 </script>

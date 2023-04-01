@@ -14,7 +14,7 @@ const routes = [
     {path: "/signup", name: "SignupForm", component: SignupForm},
     {path: "/group/:groupId/post/:postId", name: "CommunityPost", component: CommunityPost},
     {path: "/group/:groupId/post/new", name: "WritePost", component: WritePost},
-    {path: "/community", name: "AppCommunity", component: AppCommunity}
+    {path: "/community", name: "AppCommunity", component: AppCommunity},
 ];
 
 const router = createRouter({

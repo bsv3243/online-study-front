@@ -13,7 +13,7 @@
             <router-link to="/record" style="text-decoration: none; color: inherit">공부기록</router-link>
           </v-btn>
           <v-btn>
-            <router-link to="/community" style="text-decoration: none; color: inherit">커뮤니티</router-link>
+            <router-link to="/community" @click="initCommunityStore()" style="text-decoration: none; color: inherit">커뮤니티</router-link>
           </v-btn>
         </div>
         <v-spacer></v-spacer>
@@ -28,14 +28,16 @@
 import {useLoginStore} from "@/LoginStore";
 import {useMemberStore} from "@/store/MemberStore";
 import LoginForm from "@/components/login/LoginForm";
+import {useCommunityStore} from "@/store/CommunityStore";
 export default {
   name: "AppBar",
   components: {LoginForm},
   setup() {
     const loginStore = useLoginStore();
     const memberStore = useMemberStore();
+    const communityStore = useCommunityStore();
 
-    return {loginStore, memberStore};
+    return {loginStore, memberStore, communityStore};
   },
   async mounted() {
     if(this.loginStore.isLogin) {
@@ -75,6 +77,9 @@ export default {
         this.loginStore.logout();
         alert("세션 정보가 만료되었습니다.")
       }
+    },
+    initCommunityStore() {
+      this.communityStore.initStore()
     }
   }
 }
