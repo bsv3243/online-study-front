@@ -100,8 +100,59 @@ export default {
           }
         ]
       }
-    ]
-  })
+    ],
+    postsGetRequest: {
+      page: 0,
+      size: 5,
+      category: null
+    },
+    infoPosts: [],
+    questionPosts: [],
+    chatPosts: [],
+    dataReady: false,
+  }),
+  mounted() {
+    this.init();
+
+    this.dataReady = true;
+  },
+  methods: {
+    moveToPost(postId) {
+      this.$router.push("community/" + postId);
+    },
+    moveToCategory(value) {
+      const category = {
+        value: value,
+        name: this.getPostCategoryName(value)
+      }
+      this.communityStore.updateCategory(category);
+    },
+    getPostCategoryName(value) {
+      for(const category of this.postCategories) {
+        if(category.value === value) {
+          return category.name
+        }
+      }
+    },
+    async init() {
+      this.infoPosts = await this.postsGetApiCall("INFO");
+      this.questionPosts = await this.postsGetApiCall("QUESTION");
+      this.chatPosts = await this.postsGetApiCall("CHAT");
+    },
+    async postsGetApiCall(category) {
+      this.postsGetRequest.category = category;
+      try {
+        const response = await this.axios.get("/api/v1/posts", {
+          params: this.postsGetRequest
+        });
+
+        return response.data.data;
+      }catch (err) {
+        console.log("잠시 후에 다시 시도해주세요.")
+      }
+
+    }
+  }
 }
 </script>
 
