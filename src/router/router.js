@@ -6,6 +6,7 @@ import SignupForm from "@/components/login/SignupForm";
 import CommunityPost from "@/components/study/group/CommunityPost";
 import WritePost from "@/components/community/WritePost";
 import AppCommunity from "@/components/AppCommunity";
+import CommunityPostV2 from "@/components/community/CommunityPostV2";
 
 const routes = [
     {path: "/", name: "AppStudy", component: AppStudy},
@@ -15,6 +16,7 @@ const routes = [
     {path: "/group/:groupId/post/:postId", name: "CommunityPost", component: CommunityPost},
     {path: "/group/:groupId/post/new", name: "WritePost", component: WritePost},
     {path: "/community", name: "AppCommunity", component: AppCommunity},
+    {path: "/community/:postId", name: "CommunityPostV2", component: CommunityPostV2}
 ];
 
 const router = createRouter({
