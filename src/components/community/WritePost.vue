@@ -15,32 +15,25 @@
           <div class="title-container">
             <input class="title-form" placeholder="제목을 입력해주세요." v-model="this.postCreateRequest.title"/>
           </div>
-            <tiptap @content="contentUpdate"/>
+          <tiptap @content="contentUpdate"/>
+          <div class="post-tags">
+            <span class="align-self-center text-grey-darken-1" v-if="selectedStudies.length===0">원하시는 태그를 지정해주세요.</span>
+              <v-chip v-for="tag in selectedStudies" :key="tag.studyId">
+                # {{tag.name}}
+              </v-chip>
+          </div>
           <div class="post-bottom">
             <div>
               <v-dialog
-                  v-model="selectTagsDialog"
+                  v-model="showTagsDialog"
                   max-width="350">
                 <template v-slot:activator="{ props }">
                   <v-btn v-bind="props" variant="outlined">태그 선택</v-btn>
                 </template>
-                <v-card max-width="350">
-                  <v-card-title>
-                    태그 선택
-                  </v-card-title>
-                  <v-card-text>
-                    <v-chip-group
-                        v-model="selectedTags"
-                        selected-class="text-amber-darken-1" column multiple>
-                      <v-chip v-for="tag in studies" :key="tag.id">
-                        # {{tag.title}}
-                      </v-chip>
-                    </v-chip-group>
-                  </v-card-text>
-                  <div class="pa-2">
-                    <v-btn class="float-right" variant="text" @click="selectTagsDialog=false">확인</v-btn>
-                  </div>
-                </v-card>
+                <add-study-form @studies="setSelectedStudies"
+                                @show-dialog="closeTagsDialog"
+                                :post-studies="selectedStudies"
+                                :form-title="'태그 선택'"/>
               </v-dialog>
             </div>
             <div class="button-post-write">
@@ -60,11 +53,19 @@
 
 <script>
 import Tiptap from "@/components/editor/Tiptap";
+import {useMemberStore} from "@/store/MemberStore";
+import AddStudyForm from "@/components/community/AddStudyForm";
+
 export default {
   name: "WritePost",
-  components: {Tiptap},
+  components: {AddStudyForm, Tiptap},
+  setup() {
+    const memberStore = useMemberStore();
+
+    return {memberStore}
+  },
   data:() => ({
-    selectTagsDialog: false,
+    showTagsDialog: false,
     categories: [
       {
         name: "잡담",
@@ -89,7 +90,7 @@ export default {
         title: "vue.js"
       }
     ],
-    selectedTags: [],
+    selectedStudies: [],
     content: null,
 
     //axios
@@ -103,19 +104,40 @@ export default {
       category: null,
       studyIds: null,
       groupId: null,
+    },
+    studiesGetRequest: {
+      page: 0,
+      size: 10,
+      name: "",
+      memberId: null,
+      groupId: null,
     }
   }),
-  mounted() {
-    this.postCreateRequest.groupId = this.$route.params.groupId
-  },
   watch: {
     content() {
       this.postCreateRequest.content = this.content
+    },
+    selectedStudies() {
+      console.log(this.selectedStudies)
     }
+  },
+  async mounted() {
+    this.postCreateRequest.groupId = this.$route.params.groupId
+    this.studies = await this.studiesGetApiCall()
+    console.log(this.studies)
   },
   methods: {
     contentUpdate(content) {
       this.content = content;
+    },
+    setSelectedStudies(value) {
+      this.selectedStudies = value
+    },
+    getSelectedStudyIds() {
+      return this.selectedStudies.map(study => study.studyId);
+    },
+    closeTagsDialog(value) {
+      this.showTagsDialog = value
     },
     async postCreateApiCall() {
       if(this.postCreateRequest.title.length < 1) {
@@ -135,10 +157,32 @@ export default {
         return;
       }
 
-      const response = await this.axios.post("/api/v1/posts", this.postCreateRequest);
-      const postId = response.data.data;
+      this.postCreateRequest.studyIds = this.getSelectedStudyIds()
 
-      this.$router.push("/group/" + this.postCreateRequest.groupId + "/post/" + postId);
+      console.log(this.postCreateRequest)
+
+      try {
+        const response = await this.axios.post("/api/v1/posts", this.postCreateRequest);
+
+        const postId = response.data.data;
+
+        this.$router.push("/group/" + this.postCreateRequest.groupId + "/post/" + postId);
+      } catch (err) {
+        console.log(err)
+      }
+
+
+    },
+    async studiesGetApiCall() {
+      try {
+        const response = await this.axios.get("/api/v1/studies", {
+          params: this.studiesGetRequest
+        });
+
+        return response.data.data;
+      }catch (err) {
+        console.log(err);
+      }
     }
   }
 }
@@ -173,9 +217,17 @@ tiptap {
 .title-form:focus {
   outline: none;
 }
+.post-tags {
+  display: flex;
+  padding: 5px;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  margin-top: 5px;
+  gap: 5px
+}
 .post-bottom {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 5px;
 }
 </style>
