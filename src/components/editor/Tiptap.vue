@@ -92,13 +92,17 @@ export default {
     IconBold,
     EditorContent,
   },
+  props: {
+    parentContent: String
+  },
   data:() => ({
     editor: null,
     content: null,
   }),
   mounted() {
+
     this.editor = new Editor({
-      content: '<p>I’m running Tiptap with Vue.js. 🎉</p>',
+      content: this.parentContent,
       extensions: [
         StarterKit,
       ],
