@@ -94,9 +94,6 @@ export default {
     dataReady: false
   }),
   watch: {
-    selectedStudy() {
-      console.log(this.selectedStudy)
-    }
   },
   async mounted() {
     this.studiesGetRequest.memberId = this.memberStore.getMemberId;

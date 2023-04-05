@@ -4,24 +4,35 @@
       <div class="container">
         <div class="search-container">
           <div class="div-form">
-            <input placeholder="알고싶은 내용에 대해 검색해보세요."/>
+            <input v-model="postsGetRequest.search" placeholder="알고싶은 내용에 대해 검색해보세요."/>
           </div>
-          <v-btn variant="tonal" color="amber-darken-1" height="5vh" width="5vw">검색</v-btn>
+          <v-btn @click="searchWithStudies" variant="tonal" color="amber-darken-1" height="5vh" width="5vw">검색</v-btn>
         </div>
         <div class="search-container">
-          <div class="div-form">
-            <div class="chip-container align-center" v-if="tags.length>0">
-              <v-chip v-for="tag in tags" :key="tag.name" label closable>{{tag.name}}</v-chip>
-            </div>
-            <input placeholder="태그로 검색해보세요." v-model="tagKeyword" @keyup.enter="makeTag"/>
-          </div>
+          <v-dialog
+              v-model="showTagsDialog"
+              max-width="350">
+            <template v-slot:activator="{ props }">
+              <div class="div-form" v-bind="props">
+                <div class="chip-container align-center" v-if="studies.length>0">
+                  <v-chip v-for="tag in studies" :key="tag.name" style="z-index: 1" label># {{tag.name}}</v-chip>
+                </div>
+              <span class="tags-hint" v-if="studies.length===0">검색하고 싶은 태그를 추가해보세요.</span>
+              </div>
+            </template>
+            <add-study-form @studies="setSelectedStudies"
+                            @show-dialog="closeTagsDialog"
+                            :post-studies="studies"
+                            :form-title="'태그 선택'"/>
+          </v-dialog>
+          <v-btn @click="searchWithStudies" variant="tonal" color="amber-darken-1" height="5vh" width="5vw">태그 검색</v-btn>
         </div>
 
         <v-divider/>
 
         <div class="d-flex flex-column">
           <div v-if="dataReady">
-          <community-post-title :post="post" v-for="post in posts" :key="post.postId" @click="moveToPost(post)"/>
+          <community-post-title-with-content :post="post" v-for="post in posts" :key="post.postId" @click="moveToPost(post)"/>
           </div>
           <v-pagination/>
         </div>
@@ -31,12 +42,13 @@
 </template>
 
 <script>
-import CommunityPostTitle from "@/components/community/CommunityPostTitle";
+import CommunityPostTitleWithContent from "@/components/community/CommunityPostTitleWithContent";
 import {watch} from "vue";
 import {useCommunityStore} from "@/store/CommunityStore";
+import AddStudyForm from "@/components/community/AddStudyForm";
 export default {
   name: "CommunityPostListByCategory",
-  components: {CommunityPostTitle},
+  components: {CommunityPostTitleWithContent, AddStudyForm},
   setup() {
     const communityStore = useCommunityStore();
 
@@ -45,10 +57,13 @@ export default {
   data:() => ({
     category: null,
     tagKeyword: null,
-    tags: [],
+    studies: [],
+    showTagsDialog: false,
 
     postsGetRequest: {
       category: null,
+      search: "",
+      studyIds: [],
       page: 0,
       size: 10
     },
@@ -106,8 +121,24 @@ export default {
       this.tagKeyword = null
       this.tags.push(tag);
     },
+    setSelectedStudies(value) {
+      this.studies = value;
+    },
+    closeTagsDialog(value) {
+      this.showTagsDialog=value;
+    },
     moveToPost(post) {
       this.$router.push("community/"+post.postId);
+    },
+    async searchWithStudies() {
+      const studyIds = this.studies.map(study => study.studyId);
+      this.postsGetRequest.studyIds = studyIds.join(",");
+
+      console.log(this.postsGetRequest)
+
+      this.posts = await this.postsGetApiCall()
+
+      console.log(this.posts)
     },
     async postsGetApiCall() {
       this.postsGetRequest.category = this.category.value;
@@ -164,5 +195,11 @@ export default {
   align-items: center;
   gap: 3px;
   padding-left: 5px;
+}
+.tags-hint {
+  align-self: center;
+  padding-left: 7px;
+  font-size: 14px;
+  color: #999999;
 }
 </style>
