@@ -75,7 +75,8 @@ export default {
         page: 0,
         size: 10,
         name: this.search,
-        date: moment(date).format().substring(0, 10)
+        date: moment(date).format().substring(0, 10),
+        days: 7
       }
 
       if(this.search) {

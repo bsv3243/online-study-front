@@ -212,7 +212,7 @@ export default {
       clearInterval(this.intervalId)
       try {
         const response = await this.axios
-            .post("/api/v1/ticket/" + this.ticketId, this.ticketUpdateRequest);
+            .patch("/api/v1/ticket/" + this.ticketId, this.ticketUpdateRequest);
 
         const ticketId = response.data.data;
 
