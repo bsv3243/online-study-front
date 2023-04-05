@@ -7,20 +7,20 @@
             <v-select
                 label="카테고리"
                 :items="categories"
-                v-model="postCreateRequest.category"
+                v-model="postUpdateRequest.category"
                 item-title="name"
                 item-value="value" density="comfortable" variant="outlined">
             </v-select>
           </div>
           <div class="title-container">
-            <input class="title-form" placeholder="제목을 입력해주세요." v-model="this.postCreateRequest.title"/>
+            <input class="title-form" placeholder="제목을 입력해주세요." v-model="this.postUpdateRequest.title"/>
           </div>
-          <tiptap @content="contentUpdate"/>
+          <tiptap :parent-content="post.content" @content="contentUpdate"/>
           <div class="post-tags">
             <span class="align-self-center text-grey-darken-1" v-if="selectedStudies.length===0">원하시는 태그를 지정해주세요.</span>
-              <v-chip v-for="tag in selectedStudies" :key="tag.studyId">
-                # {{tag.name}}
-              </v-chip>
+            <v-chip v-for="tag in selectedStudies" :key="tag.studyId">
+              # {{tag.name}}
+            </v-chip>
           </div>
           <div class="post-bottom">
             <div>
@@ -37,10 +37,10 @@
               </v-dialog>
             </div>
             <div class="button-post-write">
-              <v-btn variant="outlined">
+              <v-btn @click="showPost" variant="outlined">
                 취소
               </v-btn>
-              <v-btn variant="outlined" class="bg-green-lighten-1" @click="postCreateApiCall">
+              <v-btn variant="outlined" class="bg-green-lighten-1" @click="postUpdateApiCall">
                 글쓰기
               </v-btn>
             </div>
@@ -57,8 +57,11 @@ import {useMemberStore} from "@/store/MemberStore";
 import AddStudyForm from "@/components/community/AddStudyForm";
 
 export default {
-  name: "WritePost",
+  name: "UpdatePost",
   components: {AddStudyForm, Tiptap},
+  props: {
+    post: Object
+  },
   setup() {
     const memberStore = useMemberStore();
 
@@ -98,12 +101,11 @@ export default {
     dataReady: false,
 
     //request
-    postCreateRequest: {
+    postUpdateRequest: {
       title: null,
       content: null,
       category: null,
       studyIds: null,
-      groupId: null,
     },
     studiesGetRequest: {
       page: 0,
@@ -115,18 +117,29 @@ export default {
   }),
   watch: {
     content() {
-      this.postCreateRequest.content = this.content
+      this.postUpdateRequest.content = this.content
     },
     selectedStudies() {
       console.log(this.selectedStudies)
     }
   },
   async mounted() {
-    this.postCreateRequest.groupId = this.$route.params.groupId
+    console.log(this.post)
+
+    this.selectedStudies = this.post.postStudies
+    this.postUpdateRequest.title = this.post.title
+    this.postUpdateRequest.content = this.post.content
+    this.postUpdateRequest.category = this.post.category
+    console.log(this.post.category)
+
+    console.log(this.postUpdateRequest)
+    
     this.studies = await this.studiesGetApiCall()
-    console.log(this.studies)
   },
   methods: {
+    showPost() {
+      this.$emit("showUpdatePost", false);
+    },
     contentUpdate(content) {
       this.content = content;
     },
@@ -139,34 +152,30 @@ export default {
     closeTagsDialog(value) {
       this.showTagsDialog = value
     },
-    async postCreateApiCall() {
-      if(this.postCreateRequest.title.length < 1) {
+    async postUpdateApiCall() {
+      if(this.postUpdateRequest.title.length < 1) {
         alert("제목은 공란일 수 없습니다.")
         return;
       }
-      if(this.postCreateRequest.content.length < 1) {
+      if(this.postUpdateRequest.content.length < 1) {
         alert("본문은 공란일 수 없습니다.");
         return;
       }
-      if(this.postCreateRequest.category == null) {
+      if(this.postUpdateRequest.category == null) {
         alert("카테고리는 필수입니다.");
         return;
       }
-      if(this.postCreateRequest.groupId == null) {
-        alert("그룹ID가 지정되지 않았습니다.");
-        return;
-      }
 
-      this.postCreateRequest.studyIds = this.getSelectedStudyIds()
+      this.postUpdateRequest.studyIds = this.getSelectedStudyIds()
 
-      console.log(this.postCreateRequest)
+      console.log(this.postUpdateRequest)
 
       try {
-        const response = await this.axios.post("/api/v1/posts", this.postCreateRequest);
+        const response = await this.axios.patch("/api/v1/post/"+this.post.postId, this.postUpdateRequest);
 
         const postId = response.data.data;
 
-        this.$router.push("/group/" + this.postCreateRequest.groupId + "/post/" + postId);
+        this.$router.go();
       } catch (err) {
         console.log(err)
       }
