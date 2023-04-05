@@ -17,7 +17,7 @@
             <div class="d-flex justify-space-between">
               <v-chip-group>
                 <v-chip v-for="tag in post.postStudies" :key="tag.id" class="pa-2" label>
-                  # {{tag.title}}
+                  # {{tag.name}}
                 </v-chip>
               </v-chip-group>
               <div class="d-flex align-center">

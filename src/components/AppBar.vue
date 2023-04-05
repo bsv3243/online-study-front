@@ -15,6 +15,9 @@
           <v-btn>
             <router-link to="/community" @click="initCommunityStore()" style="text-decoration: none; color: inherit">커뮤니티</router-link>
           </v-btn>
+          <v-btn>
+            <router-link to="/profile" style="text-decoration: none; color: inherit">계정관리</router-link>
+          </v-btn>
         </div>
         <v-spacer></v-spacer>
         <LoginForm v-if="!loginStore.isLogin"/>
