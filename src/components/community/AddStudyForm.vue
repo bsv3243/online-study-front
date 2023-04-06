@@ -60,7 +60,7 @@
 <script>
 import IconInfo from "@/components/icons/IconInfo";
 import IconSearch from "@/components/icons/IconSearch";
-import {useMemberStore} from "@/store/MemberStore";
+import {useLoginStore} from "@/store/LoginStore";
 
 export default {
   name: "AddStudyForm",
@@ -73,9 +73,9 @@ export default {
     IconSearch
   },
   setup() {
-    const memberStore = useMemberStore();
+    const loginStore = useLoginStore();
 
-    return {memberStore}
+    return {loginStore}
   },
   data:() => ({
     showDialog: false,
@@ -96,7 +96,7 @@ export default {
   watch: {
   },
   async mounted() {
-    this.studiesGetRequest.memberId = this.memberStore.getMemberId;
+    this.studiesGetRequest.memberId = this.loginStore.getMemberId;
     this.studies = await this.studiesGetApiCall()
     this.selectedStudies = this.postStudies
 

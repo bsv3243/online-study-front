@@ -28,8 +28,7 @@
 </template>
 
 <script>
-import {useLoginStore} from "@/LoginStore";
-import {useMemberStore} from "@/store/MemberStore";
+import {useLoginStore} from "@/store/LoginStore";
 import LoginForm from "@/components/login/LoginForm";
 import {useCommunityStore} from "@/store/CommunityStore";
 export default {
@@ -37,15 +36,11 @@ export default {
   components: {LoginForm},
   setup() {
     const loginStore = useLoginStore();
-    const memberStore = useMemberStore();
     const communityStore = useCommunityStore();
 
-    return {loginStore, memberStore, communityStore};
+    return {loginStore, communityStore};
   },
   async mounted() {
-    if(this.loginStore.isLogin) {
-      await this.memberGetApiCall()
-    }
   },
   data: () => ({
     links: [
@@ -70,15 +65,6 @@ export default {
         this.$router.push("/")
       } catch (err) {
         alert("잠시 후에 다시 시도해주세요.")
-      }
-    },
-    async memberGetApiCall() {
-      try {
-        const response = await this.axios.get("/api/v1/member");
-        this.memberStore.setMember(response.data.data);
-      } catch (err) {
-        this.loginStore.logout();
-        alert("세션 정보가 만료되었습니다.")
       }
     },
     initCommunityStore() {

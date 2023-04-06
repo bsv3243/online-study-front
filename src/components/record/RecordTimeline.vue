@@ -26,12 +26,12 @@
 </template>
 
 <script>
-import {useMemberStore} from "@/store/MemberStore";
 import moment from "moment";
 
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import {ko} from 'date-fns/locale'
+import {useLoginStore} from "@/store/LoginStore";
 
 export default {
   name: "RecordTimeLine",
@@ -43,9 +43,9 @@ export default {
     selectedStudy: Object,
   },
   setup() {
-    const memberStore = useMemberStore();
+    const loginStore = useLoginStore();
 
-    return {memberStore}
+    return {loginStore}
   },
   data:() => ({
     date: null,
@@ -69,6 +69,18 @@ export default {
   }),
   watch: {
     async date() {
+      if(this.loginStore.isLogin) {
+        this.initTicketRequest()
+
+        this.memberTickets = await this.ticketGetApiCall()
+
+        this.setData()
+      }
+    }
+  },
+  async mounted() {
+    this.date = new Date()
+    if(this.loginStore.isLogin) {
       this.initTicketRequest()
 
       this.memberTickets = await this.ticketGetApiCall()
@@ -76,17 +88,9 @@ export default {
       this.setData()
     }
   },
-  async mounted() {
-    this.date = new Date()
-    this.initTicketRequest()
-
-    this.memberTickets = await this.ticketGetApiCall()
-
-    this.setData()
-  },
   methods: {
     initTicketRequest() {
-      this.ticketGetRequest.memberId = this.memberStore.getMemberId;
+      this.ticketGetRequest.memberId = this.loginStore.getMemberId;
 
       if (this.date) {
         this.ticketGetRequest.date = moment(this.date).format().substring(0, 10);

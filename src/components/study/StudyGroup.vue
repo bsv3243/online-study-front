@@ -50,22 +50,22 @@ import { mdiDeskLampOn } from '@mdi/js';
 import StudyRoom from "@/components/study/group/StudyRoom";
 import StudyCommunity from "@/components/study/group/StudyCommunity";
 import StudyGroupInfo from "@/components/study/group/StudyGroupInfo";
-import {useMemberStore} from "@/store/MemberStore";
 import GroupManageDialog from "@/components/study/group/GroupManageDialog";
+import {useLoginStore} from "@/store/LoginStore";
 export default {
   name: "StudyGroup",
   components: {GroupManageDialog, SvgIcon, StudyGroupInfo, StudyCommunity, StudyRoom},
   setup() {
-    const memberStore = useMemberStore();
+    const loginStore = useLoginStore();
 
-    return {memberStore};
+    return {loginStore};
   },
   async mounted() {
     this.groupId = this.$route.params.groupId;
     await this.groupGetApiCall()
 
-    if(this.group.groupMembers.some(groupMember => groupMember.memberId===this.memberStore.getMemberId)) {
-      const find = this.group.groupMembers.find(groupMember => groupMember.memberId===this.memberStore.getMemberId);
+    if(this.group.groupMembers.some(groupMember => groupMember.memberId===this.loginStore.getMemberId)) {
+      const find = this.group.groupMembers.find(groupMember => groupMember.memberId===this.loginStore.getMemberId);
       if(find.role === "MASTER") {
         this.isMaster = true
       }

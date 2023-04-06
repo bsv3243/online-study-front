@@ -53,7 +53,6 @@
 
 <script>
 import Tiptap from "@/components/editor/Tiptap";
-import {useMemberStore} from "@/store/MemberStore";
 import AddStudyForm from "@/components/community/AddStudyForm";
 
 export default {
@@ -63,9 +62,6 @@ export default {
     post: Object
   },
   setup() {
-    const memberStore = useMemberStore();
-
-    return {memberStore}
   },
   data:() => ({
     showTagsDialog: false,

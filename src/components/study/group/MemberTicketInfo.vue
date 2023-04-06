@@ -29,7 +29,7 @@
 <script>
 import SelectStudyMenu from "@/components/study/group/SelectStudyMenu";
 import moment from "moment";
-import {useMemberStore} from "@/store/MemberStore";
+import {useLoginStore} from "@/store/LoginStore";
 
 export default {
   name: "MemberTicketInfo",
@@ -40,9 +40,9 @@ export default {
     SelectStudyMenu
   },
   setup() {
-    const memberStore = useMemberStore();
+    const loginStore = useLoginStore();
 
-    return {memberStore}
+    return {loginStore}
   },
   data:() => ({
     selectedStudy: [],
@@ -223,7 +223,7 @@ export default {
       }
     },
     async ticketsGetApiCall() {
-      const memberId = this.memberStore.getMemberId
+      const memberId = this.loginStore.getMemberId
       try{
         const response = await this.axios.get("/api/v1/tickets", {
           params: {

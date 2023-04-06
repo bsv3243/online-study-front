@@ -34,9 +34,9 @@
 
 <script>
 
-import {useMemberStore} from "@/store/MemberStore";
 import ProfileGroupList from "@/components/profile/ProfileGroupList";
 import ProfilePostList from "@/components/profile/ProfilePostList";
+import {useLoginStore} from "@/store/LoginStore";
 
 export default {
   name: "AppProfile",
@@ -45,15 +45,14 @@ export default {
     ProfileGroupList,
   },
   setup() {
-    const memberStore = useMemberStore();
+    const loginStore = useLoginStore();
 
-    return {memberStore};
+    return {loginStore};
   },
   data:() => ({
     memberId: null,
   }),
   mounted() {
-    this.memberId = this.memberStore.getMemberId;
   },
   methods: {
     async memberGetApiCall() {

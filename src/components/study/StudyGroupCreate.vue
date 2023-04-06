@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import {useLoginStore} from "@/LoginStore";
+import {useLoginStore} from "@/store/LoginStore";
 
 export default {
   name: "StudyGroupCreate",

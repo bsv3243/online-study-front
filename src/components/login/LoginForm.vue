@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import {useLoginStore} from "@/LoginStore";
+import {useLoginStore} from "@/store/LoginStore";
 import {storeToRefs} from 'pinia'
 import {ref, watch} from "vue";
 
@@ -82,9 +82,13 @@ export default {
   methods: {
     async loginApiCall() {
       try {
-        await this.axios.post("/api/v1/login", this.loginRequest)
+        const response = await this.axios.post("/api/v1/login", this.loginRequest);
 
-        this.loginStore.setLogin();
+        console.log(response)
+
+        this.loginStore.setLogin(response.data.data.memberId);
+
+        console.log(this.loginStore.getMemberId)
 
         this.$router.push("/")
       } catch (err) {
