@@ -25,7 +25,7 @@
       <profile-post-list/>
       <profile-comment-list/>
       <div class="base-container">
-        <v-btn variant="tonal">
+        <v-btn @click="deleteMember" variant="tonal">
           탈퇴
         </v-btn>
       </div>
@@ -115,6 +115,22 @@ export default {
         const response = await this.axios.patch("/api/v1/member/"+this.memberId, request);
 
         return response.data.data;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async deleteMember() {
+      const request = {
+        memberId: this.memberId
+      }
+      await this.deleteMemberApiCall(request)
+
+      this.loginStore.logout
+      this.$router.push("/")
+    },
+    async deleteMemberApiCall() {
+      try {
+        await this.axios.delete("/api/v1/member/"+this.memberId)
       } catch (err) {
         console.log(err);
       }
