@@ -51,8 +51,7 @@
 <script>
 import StackedBarChart from "@/components/record/chart/StackedBarChart";
 import PieChart from "@/components/record/chart/PieChart";
-import {useMemberStore} from "@/store/MemberStore";
-import {useLoginStore} from "@/LoginStore";
+import {useLoginStore} from "@/store/LoginStore";
 import ScatterChart from "@/components/record/chart/ScatterChart";
 import moment from "moment";
 import RecordTimeLine from "@/components/record/RecordTimeline";
@@ -68,6 +67,11 @@ export default {
     times: Object,
     selectedStudy: Object
   },
+  setup() {
+    const loginStore = useLoginStore();
+
+    return {loginStore};
+  },
   watch: {
     async selectedStudy() {
       if (this.selectedStudy) {
@@ -76,7 +80,7 @@ export default {
         this.recordGetRequest.studyId = null;
       }
 
-      this.recordGetRequest.memberId = this.memberStore.getMemberId;
+      this.recordGetRequest.memberId = this.loginStore.getMemberId;
       this.studyRecords = await this.recordGetApiCall()
 
       console.log(this.studyRecords)
@@ -95,7 +99,7 @@ export default {
     async times() {
 
 
-      this.recordGetRequest.memberId = this.memberStore.getMemberId;
+      this.recordGetRequest.memberId = this.loginStore.getMemberId;
       this.seStartDateAndDays();
       this.studyRecords = await this.recordGetApiCall();
 
@@ -104,14 +108,8 @@ export default {
       this.chartKey++;
     }
   },
-  setup() {
-    const memberStore = useMemberStore();
-    const loginStore = useLoginStore();
-
-    return {memberStore, loginStore};
-  },
   async mounted() {
-    this.recordGetRequest.memberId = this.memberStore.getMemberId
+    this.recordGetRequest.memberId = this.loginStore.getMemberId
     console.log(this.recordGetRequest)
     this.studyRecords = await this.recordGetApiCall()
 

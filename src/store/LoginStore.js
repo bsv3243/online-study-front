@@ -6,6 +6,7 @@ export const useLoginStore = defineStore('login', {
         loginAt: null,
         login: false,
         loginDialog: false,
+        memberId: null,
     }),
     getters: {
         isLogin() {
@@ -16,17 +17,22 @@ export const useLoginStore = defineStore('login', {
         },
         test() {
             return this.loginAt;
+        },
+        getMemberId() {
+            return this.memberId;
         }
     },
     actions: {
-        setLogin() {
+        setLogin(memberId) {
             this.login = true
             this.loginAt = new Date();
             this.loginDialog = false;
+            this.memberId = memberId;
         },
         logout() {
             this.login = false;
             this.loginAt = null
+            this.memberId = null;
         },
         setLoginDialog(flag) {
             this.loginDialog = flag

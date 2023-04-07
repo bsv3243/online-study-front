@@ -109,8 +109,8 @@
 import SvgIcon from "@jamescoyle/vue-icon";
 import {mdiEyeOutline} from "@mdi/js";
 import moment from "moment";
-import {useMemberStore} from "@/store/MemberStore";
 import UpdatePost from "@/components/community/UpdatePost";
+import {useLoginStore} from "@/store/LoginStore";
 
 export default {
   name: "CommunityPostV2",
@@ -119,9 +119,9 @@ export default {
     SvgIcon
   },
   setup() {
-    const memberStore = useMemberStore();
+    const loginStore = useLoginStore();
 
-    return {memberStore}
+    return {loginStore}
   },
   data: () => ({
     mdiEyeOutline,
@@ -255,7 +255,7 @@ export default {
       this.showUpdatePost=value;
     },
     isMemberOwn(memberId){
-      const loginMemberId = this.memberStore.getMemberId
+      const loginMemberId = this.loginStore.getMemberId
 
       return memberId === loginMemberId
     },
