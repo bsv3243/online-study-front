@@ -34,7 +34,7 @@
               </v-chip>
             </v-chip-group>
           </div>
-          <div class="post-group-container">
+          <div class="post-group-container"  v-if="!post.group.deleted">
             <div class="w-25">
               <div>
                 {{post.group.name}}
@@ -63,7 +63,11 @@
                 둘러보기
               </v-btn>
             </div>
-
+          </div>
+          <div class="post-group-container" v-if="post.group.deleted">
+            <div class="d-flex justify-center w-100">
+              <span>삭제된 그룹입니다.</span>
+            </div>
           </div>
           <div>
             <h3>댓글</h3>
@@ -223,7 +227,11 @@ export default {
       this.postId = this.$route.params.postId;
       this.post = await this.postGetApiCall()
 
-      this.memberTickets = await this.ticketsGetApiCall()
+      if(this.post.deleted) {
+        this.memberTickets = await this.ticketsGetApiCall()
+      }
+
+      console.log(this.post)
 
       this.dataReady = true;
     },
@@ -293,6 +301,8 @@ export default {
         return response.data.data;
       } catch (err) {
         console.log(err);
+        alert("게시글이 존재하지 않습니다.")
+        this.$router.go(-1);
       }
     },
     async postDeleteApiCall() {
