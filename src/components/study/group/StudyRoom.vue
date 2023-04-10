@@ -208,7 +208,7 @@ export default {
 
     //stomp
     connect() {
-      const sockJS = new SockJS("http://localhost:8080/ws");
+      const sockJS = new SockJS("https://studybread.shop/ws");
       this.stompClient = Stomp.over(sockJS)
 
       this.stompClient.connect(
