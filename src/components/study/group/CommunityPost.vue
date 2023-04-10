@@ -15,7 +15,7 @@
             <p class="date">작성일 {{ createdAtYMD }} {{createdAtHMS}}</p>
             <div class="d-flex pl-2">
               <SvgIcon type="mdi" :path="mdiEyeOutline"/>
-              <p>300</p>
+              <p>{{ post.viewCount }}</p>
             </div>
           </div>
         </div>
