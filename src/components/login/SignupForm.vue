@@ -26,9 +26,9 @@
             <input class="sign-up-input"
                    type="password"
                    placeholder="********"
-                   v-model="passwordCheck"/>
+                   v-model="signupRequest.passwordCheck"/>
             <p class="password-check"
-               v-if="signupRequest.password !== passwordCheck">비밀번호가 일치하지 않습니다.</p>
+               v-if="signupRequest.password !== signupRequest.passwordCheck">비밀번호가 일치하지 않습니다.</p>
           </div>
         </form>
         <v-btn block
@@ -47,14 +47,14 @@ export default {
     signupRequest: {
       username: "",
       password: "",
+      passwordCheck: "",
       nickname: "",
     },
-    passwordCheck: "",
     passwordHint: false,
   }),
   methods: {
     async signUpApiCall() {
-      if(this.signupRequest.password !== this.passwordCheck) {
+      if(this.signupRequest.password !== this.signupRequest.passwordCheck) {
         alert("비밀번호가 일치하지 않습니다.")
       }
       if(this.signupRequest.nickname === "") {
