@@ -20,8 +20,8 @@
           </v-btn>
         </div>
         <v-spacer></v-spacer>
-        <LoginForm v-if="!loginStore.isLogin"/>
-        <v-btn v-if="loginStore.isLogin" @click="logoutApiCall" variant="plain">로그아웃</v-btn>
+        <LoginForm v-if="!isLogin"/>
+        <v-btn v-if="isLogin" @click="logoutApiCall" variant="plain">로그아웃</v-btn>
       </v-container>
     </v-responsive>
   </v-app-bar>
@@ -31,6 +31,7 @@
 import {useLoginStore} from "@/store/LoginStore";
 import LoginForm from "@/components/login/LoginForm";
 import {useCommunityStore} from "@/store/CommunityStore";
+import {watch} from "vue";
 export default {
   name: "AppBar",
   components: {LoginForm},
@@ -40,9 +41,8 @@ export default {
 
     return {loginStore, communityStore};
   },
-  async mounted() {
-  },
   data: () => ({
+    isLogin: false,
     links: [
       {
         title:"공부방"
@@ -56,6 +56,14 @@ export default {
     ],
     loginDialog: false,
   }),
+  watch: {
+  },
+  async mounted() {
+    this.isLogin = this.loginStore.isLogin
+    watch(() => this.loginStore.isLogin, () => {
+      this.isLogin = this.loginStore.isLogin
+    })
+  },
   methods: {
     async logoutApiCall() {
       try {
