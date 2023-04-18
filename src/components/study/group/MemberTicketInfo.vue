@@ -104,7 +104,7 @@ export default {
       }
 
       for(const ticket of member.expiredTickets) {
-        if(ticket.study.studyId === study.studyId && ticket.status==="STUDY") {
+        if(ticket.status==="STUDY" && ticket.study.studyId === study.studyId) {
           studyTime += ticket.activeTime;
         }
       }
