@@ -296,7 +296,7 @@ export default {
     },
     async postGetApiCall() {
       try {
-        const response = await this.axios.get("/api/v1/post/" + this.postId);
+        const response = await this.axios.get("/api/v1/posts/" + this.postId);
 
         return response.data.data;
       } catch (err) {
@@ -307,7 +307,7 @@ export default {
     },
     async postDeleteApiCall() {
       try {
-        await this.axios.delete("/api/v1/post/"+this.postId);
+        await this.axios.delete("/api/v1/posts/"+this.postId);
       }catch (err) {
         console.log(err);
       }
@@ -353,7 +353,7 @@ export default {
     async commentUpdateApiCall(commentId) {
       try{
         console.log(this.commentUpdateRequest)
-        await this.axios.patch("/api/v1/comment/"+commentId, this.commentUpdateRequest)
+        await this.axios.patch("/api/v1/comments/"+commentId, this.commentUpdateRequest)
 
         console.log(this.commentUpdateRequest)
       }catch (err) {
@@ -362,7 +362,7 @@ export default {
     },
     async commentDeleteApiCall(commentId) {
       try {
-        const response = await this.axios.delete("/api/v1/comment/"+commentId);
+        const response = await this.axios.delete("/api/v1/comments/"+commentId);
 
         return response.data.data;
       } catch (err) {

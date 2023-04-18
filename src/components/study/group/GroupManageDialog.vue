@@ -82,7 +82,7 @@ export default {
         return;
       }
       try {
-        await this.axios.post("/api/v1/group/" + this.groupId, this.groupUpdateRequest)
+        await this.axios.post("/api/v1/groups/" + this.groupId, this.groupUpdateRequest)
 
         this.$router.push("/group/"+this.groupId)
       } catch (err) {
@@ -92,7 +92,7 @@ export default {
     async groupDeleteApiCall() {
       if(confirm("삭제하시겠습니까? \n삭제 후 되돌릴 수 없습니다.")) {
         try {
-          await this.axios.delete("/api/v1/group/" + this.groupId)
+          await this.axios.delete("/api/v1/groups/" + this.groupId)
 
           this.$router.push("/")
         } catch (err) {

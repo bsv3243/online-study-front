@@ -167,7 +167,7 @@ export default {
       console.log(this.postUpdateRequest)
 
       try {
-        const response = await this.axios.patch("/api/v1/post/"+this.post.postId, this.postUpdateRequest);
+        const response = await this.axios.patch("/api/v1/posts/"+this.post.postId, this.postUpdateRequest);
 
         const postId = response.data.data;
 

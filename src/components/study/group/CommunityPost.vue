@@ -134,7 +134,7 @@ export default {
   },
   methods: {
     async postGetApiCall() {
-      const response = await this.axios.get("/api/v1/post/"+this.postId);
+      const response = await this.axios.get("/api/v1/posts/"+this.postId);
       this.post = response.data.data;
 
 

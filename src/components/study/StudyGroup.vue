@@ -115,7 +115,7 @@ export default {
   methods: {
     async groupGetApiCall() {
       try {
-        const response = await this.axios.get("/api/v1/group/" + this.groupId);
+        const response = await this.axios.get("/api/v1/groups/" + this.groupId);
         this.group = response.data.data;
 
         this.dataReady = true
@@ -125,7 +125,7 @@ export default {
     },
     async groupJoinApiCall() {
       try {
-        await this.axios.post("/api/v1/group/" + this.groupId + "/join");
+        await this.axios.post("/api/v1/groups/" + this.groupId + "/join");
 
         this.isMember = true;
       } catch (err) {
@@ -133,13 +133,13 @@ export default {
       }
     },
     async groupQuitApiCall() {
-      await this.axios.post("/api/v1/group/"+this.groupId + "/quit");
+      await this.axios.post("/api/v1/groups/"+this.groupId + "/quit");
 
       this.isMember = false;
     },
     async groupDeleteApiCall() {
       try{
-        await this.axios.delete("/api/v1/group/"+this.groupId)
+        await this.axios.delete("/api/v1/groups/"+this.groupId)
 
         this.$router.push("/group")
       } catch (err) {

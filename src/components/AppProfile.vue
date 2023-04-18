@@ -103,7 +103,7 @@ export default {
     },
     async memberGetApiCall() {
       try{
-        const response = await this.axios.get("/api/v1/member/"+this.memberId);
+        const response = await this.axios.get("/api/v1/members/"+this.memberId);
 
         return response.data.data;
       }catch (err) {
@@ -112,7 +112,7 @@ export default {
     },
     async memberUpdateApiCall(request) {
       try{
-        const response = await this.axios.patch("/api/v1/member/"+this.memberId, request);
+        const response = await this.axios.patch("/api/v1/members/"+this.memberId, request);
 
         return response.data.data;
       } catch (err) {
@@ -130,7 +130,7 @@ export default {
     },
     async deleteMemberApiCall() {
       try {
-        await this.axios.delete("/api/v1/member/"+this.memberId)
+        await this.axios.delete("/api/v1/members/"+this.memberId)
       } catch (err) {
         console.log(err);
       }

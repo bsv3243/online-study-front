@@ -97,7 +97,7 @@ export default {
     },
     async deleteCommentApiCall(commentId) {
       try {
-        await this.axios.delete("/api/v1/comment/" + commentId);
+        await this.axios.delete("/api/v1/comments/" + commentId);
       } catch (err) {
         console.log(err);
       }

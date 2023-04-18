@@ -116,7 +116,7 @@ export default {
     },
     async quitGroupApiCall(groupId) {
       try{
-        await this.axios.post("/api/v1/group/"+groupId+"/quit");
+        await this.axios.post("/api/v1/groups/"+groupId+"/quit");
       } catch (err) {
         console.log(err);
       }
@@ -128,7 +128,7 @@ export default {
     },
     async deleteGroupApiCall(groupId) {
       try{
-        await this.axios.delete("/api/v1/group/"+groupId);
+        await this.axios.delete("/api/v1/groups/"+groupId);
       } catch (err) {
         console.log(err);
       }

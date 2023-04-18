@@ -215,7 +215,7 @@ export default {
           {},
           frame => {
             console.log("connected");
-            this.stompClient.subscribe("/sub/group/" + this.group.groupId, response => {
+            this.stompClient.subscribe("/sub/groups/" + this.group.groupId, response => {
               console.log("응답: ", response)
               console.log("응답 데이터: ", JSON.parse(response.body))
               let data = JSON.parse(response.body);
