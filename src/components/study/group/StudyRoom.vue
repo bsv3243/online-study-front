@@ -216,9 +216,10 @@ export default {
           frame => {
             console.log("connected");
             this.stompClient.subscribe("/sub/groups/" + this.group.groupId, response => {
-              console.log("응답: ", response)
-              console.log("응답 데이터: ", JSON.parse(response.body))
-              let data = JSON.parse(response.body);
+              // console.log("응답: ", response)
+              // console.log("응답 데이터: ", JSON.parse(response.body))
+              let result = JSON.parse(response.body);
+              let data = result.data;
 
               let groupMember;
               if(this.groupMemberIds.includes(data.memberId)) {
