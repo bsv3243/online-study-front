@@ -157,7 +157,7 @@ export default {
       return hours + "시 " + minutes + "분";
     },
     getJoinedAt(isoString) {
-      const date = new Date(isoString.substring(0, 19));
+      const date = new Date(isoString);
 
       const fullYear = date.getFullYear();
       let month = date.getMonth()+1;

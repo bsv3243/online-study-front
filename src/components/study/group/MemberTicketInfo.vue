@@ -14,7 +14,7 @@
       <v-btn v-if="hasActiveTicket && !isRest" @click="studyToRest">
         휴식
       </v-btn>
-      <v-btn @click="ticketCreateApiCall('STUDY')" v-if="isRest">다시 시작</v-btn>
+<!--      <v-btn @click="restToStudy" v-if="isRest">다시 시작</v-btn>-->
       <v-spacer/>
       <v-btn @click="ticketCreateApiCall('STUDY')" v-if="!hasActiveTicket">
         시작
@@ -90,24 +90,32 @@ export default {
     this.member = member;
 
     if(member.activeTicket !== null) {
-      const study = member.activeTicket.study;
+
 
       let studyTime = 0;
 
+      let study;
       if(member.activeTicket.status === "STUDY") {
         const start = this.getDate(member.activeTicket.startTime).getTime();
         const now = new Date().getTime();
 
         studyTime += Math.floor(now / 1000) - Math.floor(start / 1000);
+
+        study = member.activeTicket.study;
       } else {
         this.isRest = true;
-      }
 
-      for(const ticket of member.expiredTickets) {
-        if(ticket.status==="STUDY" && ticket.study.studyId === study.studyId) {
-          studyTime += ticket.activeTime;
+        study = {
+          studyId: "0",
+          name: "휴식"
         }
       }
+
+      // for(const ticket of member.expiredTickets) {
+      //   if(ticket.status==="STUDY" &&  ticket.study.studyId === study.studyId) {
+      //     studyTime += ticket.activeTime;
+      //   }
+      // }
 
       this.selectedStudy = study;
       this.selectedStudy.studyTime = studyTime;
@@ -175,8 +183,13 @@ export default {
       await this.ticketExpireApiCall();
       await this.ticketCreateApiCall("REST")
     },
+    async restToStudy() {
+      await this.ticketExpireApiCall();
+      this.selectedStudy = this.member.expiredTickets.at(-1).study
+      await this.ticketCreateApiCall("STUDY")
+    },
     async ticketCreateApiCall(status) {
-      if(this.selectedStudy instanceof Array) {
+      if(status === "STUDY" && this.selectedStudy instanceof Array) {
         alert("공부가 지정되지 않았습니다.");
         return;
       }
@@ -208,16 +221,17 @@ export default {
       }
     },
     async ticketExpireApiCall() {
-      this.ticketUpdateRequest.status = "END"
       clearInterval(this.intervalId)
       try {
         const response = await this.axios
-            .patch("/api/v1/tickets/" + this.ticketId, this.ticketUpdateRequest);
+            .patch("/api/v1/tickets/" + this.ticketId);
 
         const ticketId = response.data.data;
 
         this.emitData("ticketId", ticketId);
         this.hasActiveTicket = false;
+
+        this.selectedStudy = []
       } catch (err) {
         console.log(err);
       }
