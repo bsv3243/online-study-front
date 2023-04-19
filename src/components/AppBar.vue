@@ -3,7 +3,7 @@
     <v-responsive class="mx-auto" max-width="1200px">
       <v-container class="d-flex">
         <div>
-          <v-app-bar-title class="mt-1">타이틀</v-app-bar-title>
+          <v-app-bar-title class="mt-1">나의 공부방</v-app-bar-title>
         </div>
         <div class="ml-4">
           <v-btn>
