@@ -37,7 +37,7 @@
               </div>
             </v-card>
             <v-container class="pa-3">
-              <div style="height: 39vh">
+              <div style="min-height: 39vh">
 
                 <record-time-line :times="times" :selected-study="selectedStudy"/>
               </div>

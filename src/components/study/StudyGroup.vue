@@ -1,5 +1,5 @@
 <template>
-  <v-sheet height="90vh">
+  <v-sheet min-height="90vh">
   <v-responsive class="mx-auto" max-width="1200px">
       <v-container>
         <v-row>
