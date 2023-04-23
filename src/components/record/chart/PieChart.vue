@@ -26,7 +26,8 @@ export default {
         {
           label: "데이터셋1",
           data: [37405, 13627, 5324],
-          backgroundColor: "#bb7e7e",
+          backgroundColor: ['#FFF1BF', '#FFB74D', '#FFF176', '#81C784', '#4FC3F7', '#9575CD', '#FF8A65', '#E57373'
+            ,'#BA68C8', '#7986CB', '#64B5F6', '#FFECB3', '#AED581'],
         }
       ]
     },
@@ -74,8 +75,6 @@ export default {
       this.chartData.datasets[0].data = data
 
       this.dataReady = true;
-
-      console.log(this.chartData)
     },
     getStudyTime(studyRecord) {
       let studyTime = 0;

@@ -85,7 +85,10 @@ export default {
   methods: {
     setData() {
       const datasets = []
-      this.studyRecords.forEach(studyRecord => {
+      const backgroundColors = ['#FFF1BF', '#FFB74D', '#FFF176', '#81C784', '#4FC3F7', '#9575CD', '#FF8A65', '#E57373'
+        ,'#BA68C8', '#7986CB', '#64B5F6', '#FFECB3', '#AED581']
+
+      this.studyRecords.forEach((studyRecord, i) => {
 
         const label = studyRecord.studyName ? studyRecord.studyName : "휴식"
         const dataset = []
@@ -93,7 +96,14 @@ export default {
           dataset.push(record.studyTime)
         })
 
-        datasets.push({label:label, data:dataset})
+        let backgroundColor
+        if(i < backgroundColors.length) {
+          backgroundColor = backgroundColors[i]
+        } else {
+          backgroundColor = '#FFF1BF';
+        }
+
+        datasets.push({label:label, data:dataset, backgroundColor:backgroundColor})
       })
 
       this.chartData.datasets = datasets
